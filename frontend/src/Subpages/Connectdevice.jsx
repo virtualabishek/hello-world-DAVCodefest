@@ -3,14 +3,14 @@ import React, { useState } from "react";
 import { userAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 
-const Connectdevice = () => {
+const Connectdevice = ({ refetch }) => {
   const [showForm, setShowForm] = useState(false);
   const [deviceNo, setDeviceNo] = useState("");
   const [deviceCode, setDeviceCode] = useState("");
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  const { deviceLogin, isLoading, error,user } = userAuthStore(); // Zustand store
-    const userId = user?user._id:null;
+  const { deviceLogin, isLoading, error, user } = userAuthStore(); // Zustand store
+  const userId = user ? user._id : null;
   const handleConnectButtonClick = () => {
     setShowForm(!showForm);
   };
@@ -18,12 +18,13 @@ const Connectdevice = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await deviceLogin(deviceNo, deviceCode,userId);
-        console.log("Device login success:", response);
-          // navigate("/news", { state: { refresh: Date.now() } });
+      const response = await deviceLogin(deviceNo, deviceCode, userId);
+      console.log("Device login success:", response);
+      refetch()
+      // navigate("/news", { state: { refresh: Date.now() } });
 
-        // Toaster.success("device login successful")
-        // navigate("/");
+      // Toaster.success("device login successful")
+      // navigate("/");
 
 
     } catch (err) {
@@ -76,10 +77,10 @@ const Connectdevice = () => {
               </div>
 
               <button
-              
+
                 type="submit"
                 disabled={isLoading}
-                              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-700 transition"
               >
                 {isLoading ? "Connecting..." : "Connect"}
               </button>
