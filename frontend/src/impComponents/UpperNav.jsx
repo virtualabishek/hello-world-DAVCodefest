@@ -11,7 +11,7 @@ const UpperNavigation = ({ unreadNotifications }) => {
 
       
       <div className="logo flex-1">
-  <Link to="/">      <img src="/images/logo.png" alt="" className="h-10 w-10" />
+  <Link to="/"><img src="/images/logo.png" alt="" className="h-10 w-10" />
  </Link>
   
       </div>
