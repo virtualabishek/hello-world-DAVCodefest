@@ -1,57 +1,57 @@
-import { Link } from "react-router-dom";
-import { RiUserCommunityLine } from "react-icons/ri";
-import { FaBagShopping } from "react-icons/fa6";
+import { NavLink } from "react-router-dom";
+import { userAuthStore } from "../store/authStore";
+import {
+  BuildingStorefrontIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  UsersIcon,
+  HomeIcon,
+} from "@heroicons/react/24/outline";
 
 const BottomNavigation = () => {
-  return (
-    <div className="fixed bottom-0 left-0 w-full bg-white shadow-md py-3 flex justify-around items-center">
-      <Link to="/chat" className="flex flex-col items-center text-gray-500 hover:text-black">
-        <div
-          className="w-8 h-8 bg-center bg-contain bg-no-repeat"
-          style={{ backgroundImage: "url('https://img.icons8.com/?size=100&id=q7wteb2_yVxu&format=png&color=000000')" }}
-        ></div>
-          </Link>
-            <Link to="/community" className="flex flex-col items-center text-gray-500 hover:text-black">
-        {/* <RiUserCommunityLine className="w-8 h-8 bg-center bg-contain bg-no-repeat" /> */}
-        
+  const { user } = userAuthStore();
 
-        <img src="https://img.icons8.com/?size=100&id=rWegvKYgyOgP&format=png&color=000000" className="w-8 h-8 "/>
-                {/* <div
-          className="w-8 h-8 bg-center bg-contain bg-no-repeat"
-          style={{ backgroundImage: "url('navbarimg/pic2.png')" }}
-        ></div> */}
-      </Link>
-      {/* <Link to="/inventory" className="flex flex-col items-center text-gray-500 hover:text-black">
-              <i className="fa-solid fa-box text-2xl"></i>
-                <div
-          className="w-8 h-8 bg-center bg-contain bg-no-repeat"
-          style={{ backgroundImage: "url('navbarimg/pic2.png')" }}
-        ></div>
-      </Link> */}
-      <Link to="/" className="flex flex-col items-center text-green-600">
-        <div
-          className="w-8 h-8 bg-center bg-contain bg-no-repeat"
-          style={{ backgroundImage: "url('/images/logo.png')" }}
-        ></div>
-      </Link>
-    
-       <Link to="/marketplace" className=" text-gray-500 hover:text-black ">
-                      <div
-                className="w-8 h-8 bg-center bg-contain bg-no-repeat text-3xl"
-                // style={{ backgroundImage: "url('navbarimg/pic2.png')" }}
-        >
-          {/* <FaBagShopping /> */}
-          <img src="https://img.icons8.com/?size=100&id=77118&format=png&color=000000"/>
-      </div>
-            </Link>
-      <Link to="/profile" className="flex flex-col items-center text-gray-500 hover:text-black">
-              <i className="fa-solid fa-user text-2xl"></i>
-                <div
-          className="w-8 h-8 bg-center bg-contain bg-no-repeat"
-          style={{ backgroundImage: "url('https://w7.pngwing.com/pngs/966/53/png-transparent-user-profile-facebook-passport-miscellaneous-silhouette-woman-thumbnail.png')" }}
-        ></div>
-      </Link>
-    </div>
+  const navLinkClasses = ({ isActive }) =>
+    `flex flex-col items-center justify-center gap-1 w-full transition-colors duration-200 ${
+      isActive ? "text-green-600" : "text-slate-500 hover:text-green-600"
+    }`;
+
+  return (
+    <footer className="fixed bottom-0 left-0 z-40 block w-full border-t border-slate-200 bg-white">
+      <nav className="mx-auto flex h-16 max-w-md items-center justify-around">
+        <NavLink to="/chat" className={navLinkClasses}>
+          <ChatBubbleOvalLeftEllipsisIcon className="h-6 w-6" />
+          <span className="text-xs font-medium">Chat</span>
+        </NavLink>
+
+        <NavLink to="/community" className={navLinkClasses}>
+          <UsersIcon className="h-6 w-6" />
+          <span className="text-xs font-medium">Community</span>
+        </NavLink>
+
+        <NavLink to="/" className={navLinkClasses}>
+          <HomeIcon className="h-6 w-6" />
+          <span className="text-xs font-medium">Home</span>
+        </NavLink>
+
+        <NavLink to="/marketplace" className={navLinkClasses}>
+          <BuildingStorefrontIcon className="h-6 w-6" />
+          <span className="text-xs font-medium">Market</span>
+        </NavLink>
+
+        <NavLink to="/profile" className={navLinkClasses}>
+          <div
+            className="h-7 w-7 rounded-full bg-slate-200 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${
+                user?.avatar ||
+                "https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
+              })`,
+            }}
+          />
+          <span className="text-xs font-medium">Profile</span>
+        </NavLink>
+      </nav>
+    </footer>
   );
 };
 

@@ -1,85 +1,75 @@
 import { Link } from "react-router-dom";
 import { userAuthStore } from "../store/authStore";
-import { RiPriceTag3Fill } from "react-icons/ri";
-import { RiUserCommunityLine } from "react-icons/ri";
-import { FaBagShopping } from "react-icons/fa6";
-import { IoIosNotifications } from "react-icons/io";
+import {
+  BuildingStorefrontIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  UsersIcon,
+  BellIcon,
+} from "@heroicons/react/24/outline";
+
 const UpperNavigation = ({ unreadNotifications }) => {
-  const {user}=userAuthStore()
+  const { user } = userAuthStore();
+
   return (
-    <div className="fixed top-0 left-0 w-full bg-white shadow-md py-3 flex justify-between p-10 items-center ">
-
-      
-      <div className="logo flex-1">
-  <Link to="/"><img src="/images/logo.png" alt="" className="h-10 w-10" />
- </Link>
-  
-      </div>
-      
-      <div className="flex flex-row  flex-1  items-center  "> 
-
-      <Link to="/chat" className="flex flex-col items-center text-gray-500 hover:text-black flex-1">
-        <div
-          className="w-8 h-8 bg-center bg-contain bg-no-repeat"
-            style={{ backgroundImage: "url('https://img.icons8.com/?size=100&id=q7wteb2_yVxu&format=png&color=000000')" }}
-        ></div>
+    <header className="fixed top-0 left-0 z-40 w-full items-center border-b border-slate-200 bg-white/90 backdrop-blur-lg">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-8">
+          <Link to="/" aria-label="Home">
+            <img src="/images/logo.png" alt="Logo" className="h-12 w-12" />
           </Link>
-          
-      <Link to="/marketplace" className="flex flex-col items-center text-gray-500 hover:text-black flex-1">
-                <div
-          className="w-8 h-8 bg-center bg-contain bg-no-repeat text-3xl"
-          // style={{ backgroundImage: "url('navbarimg/pic2.png')" }}
-          >
-            {/* <FaBagShopping /> */}
-            <img src="https://img.icons8.com/?size=100&id=77118&format=png&color=000000"/>
-</div>
-      </Link>
-     
-      <Link to="/community" className="flex flex-col items-center text-gray-500 hover:text-black flex-1">
-            
-                <div
-          className="w-10 h-8.5 bg-center bg-contain bg-no-repeat text-4xl  "
-          // style={{ backgroundImage: "url('navbarimg/pic2.png')" }}
-          >
-            {/* <RiUserCommunityLine /> */}
-            <img src="https://img.icons8.com/?size=100&id=rWegvKYgyOgP&format=png&color=000000" className="w-8 h-8 " />
+          <nav className="hidden items-center gap-6 md:flex">
+            <Link
+              to="/marketplace"
+              className="flex items-center gap-2 text-base font-medium text-slate-700 transition-colors hover:text-green-600"
+            >
+              <BuildingStorefrontIcon className="h-6 w-6" />
+              <span>Marketplace</span>
+            </Link>
+            <Link
+              to="/community"
+              className="flex items-center gap-2 text-base font-medium text-slate-700 transition-colors hover:text-green-600"
+            >
+              <UsersIcon className="h-6 w-6" />
+              <span>Community</span>
+            </Link>
+            <Link
+              to="/chat"
+              className="flex items-center gap-2 text-base font-medium text-slate-700 transition-colors hover:text-green-600"
+            >
+              <ChatBubbleOvalLeftEllipsisIcon className="h-6 w-6" />
+              <span>Chat</span>
+            </Link>
+          </nav>
+        </div>
 
-          
-          </div>
-        </Link>
-        
-        <Link
-          to={`/notification/${user ? user._id : null}`}
-          className="relative flex flex-col items-center text-gray-500 hover:text-black flex-1"
-        >
-          <div className="relative w-10 h-10 flex items-center justify-center text-2xl">
-            <IoIosNotifications />
-
+        <div className="flex items-center gap-4">
+          <Link
+            to={`/notification/${user?._id}`}
+            className="relative rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-green-600"
+            aria-label="Notifications"
+          >
+            <BellIcon className="h-7 w-7" />
             {unreadNotifications > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+              <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-400 text-xs font-bold text-white">
                 {unreadNotifications > 9 ? "9+" : unreadNotifications}
               </span>
             )}
-          </div>
-        </Link>
+          </Link>
 
-          <Link to="/profile" className="flex flex-col items-center text-gray-500 hover:text-black flex-1">
+          <Link to="/profile" aria-label="Profile">
             <div
-  className="w-11 h-11 bg-center bg-contain bg-no-repeat bg-cover rounded-full"
-  style={{ backgroundImage: `url(${user ? user.avatar : "	https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"})` }}
-></div>
-
-      </Link>
-
-        
-
-
- </div>
-
-
-
-
-    </div>
+              className="h-11 w-11 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-transparent transition-all hover:ring-green-600"
+              style={{
+                backgroundImage: `url(${
+                  user?.avatar ||
+                  "https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
+                })`,
+              }}
+            />
+          </Link>
+        </div>
+      </div>
+    </header>
   );
 };
 

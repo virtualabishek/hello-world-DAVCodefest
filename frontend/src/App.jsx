@@ -35,7 +35,7 @@ import DeviceSetting from "./Subpages/DeviceSetting/DeviceSetting";
 import SinglePage from "./Pages/Community/SinglePage";
 import { useState } from "react";
 import TransactionHistory from "./Subpages/Transaction/TransactionHistory";
-import PlantIdentifier from "./Subpages/Plantidentifier/Plantidentifier";
+import PlantIdentifier from "./Subpages/PlantIdentifier/PlantIdentifier";
 import DiseaseIdentifier from "./Subpages/DiseaseIdentifier/DiseaseIdentifier";
 
 
