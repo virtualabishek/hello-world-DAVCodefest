@@ -7,7 +7,7 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 const Comments = ({ post, user }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
 
   const fetchComments = async () => {
@@ -45,21 +45,28 @@ const Comments = ({ post, user }) => {
       });
       setNewComment("");
       toast.success("Comment posted!");
-      fetchComments(); // Refetch comments to show the new one
+      await fetchComments();
     } catch (error) {
       toast.error("Failed to post comment.");
     } finally {
       setIsSending(false);
     }
   };
+  
+  if (!post) {
+      return (
+        <div className="flex h-full flex-col items-center justify-center p-5 text-center">
+            <h3 className="text-lg font-semibold text-slate-600">Select a post</h3>
+            <p className="mt-1 text-sm text-slate-500">Click on a post's comment icon to see the discussion here.</p>
+        </div>
+      );
+  }
 
   return (
-    <div className="flex h-[80vh] flex-col">
+    <div className="flex h-full flex-col">
       <div className="border-b border-slate-200 p-4">
         <h3 className="text-lg font-bold text-slate-800">Comments</h3>
-        <p className="truncate text-sm text-slate-500">
-          on "{post?.content}"
-        </p>
+        <p className="truncate text-sm text-slate-500">on "{post.content}"</p>
       </div>
 
       <div className="flex-grow overflow-y-auto p-4">
@@ -75,18 +82,14 @@ const Comments = ({ post, user }) => {
                   className="h-9 w-9 flex-shrink-0 rounded-full bg-slate-200 object-cover"
                 />
                 <div className="flex-1 rounded-lg bg-slate-100 px-3 py-2">
-                  <p className="text-sm font-semibold text-slate-800">
-                    {comment.userId?.name}
-                  </p>
+                  <p className="text-sm font-semibold text-slate-800">{comment.userId?.name}</p>
                   <p className="text-sm text-slate-600">{comment.content}</p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="pt-8 text-center text-sm text-slate-500">
-            No comments yet. Be the first to reply!
-          </p>
+          <p className="pt-8 text-center text-sm text-slate-500">No comments yet. Be the first to reply!</p>
         )}
       </div>
 

@@ -1,195 +1,262 @@
 import React, { useEffect, useRef, useState } from "react";
+import {
+  CameraIcon,
+  ArrowUpTrayIcon,
+  ShieldExclamationIcon,
+  BeakerIcon,
+  CheckBadgeIcon,
+} from "@heroicons/react/24/solid";
+
+// --- Loading Skeleton for the Results Panel ---
+const ResultsSkeleton = () => (
+  <div className="animate-pulse space-y-6">
+    <div className="space-y-3">
+      <div className="h-6 w-1/3 rounded-md bg-slate-200"></div>
+      <div className="h-10 w-1/2 rounded-md bg-slate-200"></div>
+    </div>
+    <div className="space-y-3">
+      <div className="h-6 w-1/3 rounded-md bg-slate-200"></div>
+      <div className="h-24 w-full rounded-md bg-slate-200"></div>
+    </div>
+  </div>
+);
 
 const DiseaseIdentifier = () => {
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
-    const [imageBlob, setImageBlob] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
-    const [prediction, setPrediction] = useState("");
-    const [solution, setSolution] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFetchingSolution, setIsFetchingSolution] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-    useEffect(() => {
-        navigator.mediaDevices
-            .getUserMedia({ video: true })
-            .then((stream) => {
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                }
-            })
-            .catch((err) => {
-                console.error("Camera access error:", err);
-            });
-    }, []);
+  const [imageBlob, setImageBlob] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [prediction, setPrediction] = useState("");
+  const [solution, setSolution] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingSolution, setIsFetchingSolution] = useState(false);
 
-    const captureImage = () => {
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
-        if (video && canvas) {
-            const ctx = canvas.getContext("2d");
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            canvas.toBlob((blob) => {
-                setImageBlob(blob);
-                setImagePreview(URL.createObjectURL(blob));
-                setPrediction("");
-                setSolution("");
-            }, "image/jpeg");
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: "environment" } })
+      .then((stream) => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
         }
-    };
+      })
+      .catch((err) => {
+        console.error("Camera access error:", err);
+      });
+  }, []);
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setImageBlob(file);
-            setImagePreview(URL.createObjectURL(file));
-            setPrediction("");
-            setSolution("");
-        }
-    };
+  const resetState = () => {
+    setImageBlob(null);
+    setImagePreview(null);
+    setPrediction("");
+    setSolution("");
+  };
 
-    const handleSendToAPI = async () => {
-        if (!imageBlob) {
-            alert("Please capture or upload an image first.");
-            return;
-        }
+  const captureImage = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (video && canvas) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        setImageBlob(blob);
+        setImagePreview(URL.createObjectURL(blob));
+        setPrediction("");
+        setSolution("");
+      }, "image/jpeg");
+    }
+  };
 
-        const formData = new FormData();
-        formData.append("file", imageBlob);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageBlob(file);
+      setImagePreview(URL.createObjectURL(file));
+      setPrediction("");
+      setSolution("");
+    }
+  };
 
-        try {
-            setIsLoading(true);
-            const res = await fetch("http://127.0.0.1:8080/ai/getdisease", {
-                method: "POST",
-                body: formData,
-            });
+  const handleSendToAPI = async () => {
+    if (!imageBlob) return;
+    setIsLoading(true);
+    setSolution("");
+    setPrediction("");
+    const formData = new FormData();
+    formData.append("file", imageBlob);
 
-            const data = await res.json();
-            setPrediction(data.prediction);
-        } catch (error) {
-            console.error("Upload failed", error);
-            setPrediction("❌ Error contacting API");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    try {
+      const res = await fetch("http://127.0.0.1:8080/ai/getdisease", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      setPrediction(data.prediction || "Could not identify disease.");
+    } catch (error) {
+      console.error("Upload failed", error);
+      setPrediction("❌ Error contacting API");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleGetSolution = async () => {
-        if (!prediction) return;
+  const handleGetSolution = async () => {
+    if (!prediction || prediction.includes("❌")) return;
+    setIsFetchingSolution(true);
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:8080/ai/getsolution?disease=${prediction}`
+      );
+      const data = await res.json();
+      setSolution(data.solution || "No specific solution found.");
+    } catch (error) {
+      console.error("Error fetching solution", error);
+      setSolution("❌ Failed to fetch solution.");
+    } finally {
+      setIsFetchingSolution(false);
+    }
+  };
 
-        try {
-            setIsFetchingSolution(true);
-            // Replace this with your actual endpoint for solution
-            const res = await fetch(
-                `http://127.0.0.1:8080/ai/getsolution?disease=${prediction}`
-            );
-            const data = await res.json();
-            setSolution(data.solution || "No solution found.");
-        } catch (error) {
-            console.error("Error fetching solution", error);
-            setSolution("❌ Failed to fetch solution.");
-        } finally {
-            setIsFetchingSolution(false);
-        }
-    };
+  return (
+    <div className="min-h-screen bg-slate-50 py-8">
+      <div className="container mx-auto max-w-6xl px-4">
+        <header className="text-center">
+          <div className="inline-flex items-center gap-3">
+            <ShieldExclamationIcon className="h-10 w-10 text-green-600" />
+            <h1 className="text-4xl font-bold text-slate-800">
+              Plant Disease Identifier
+            </h1>
+          </div>
+          <p className="mt-2 text-lg text-slate-600">
+            Use your camera or upload an image to detect plant diseases.
+          </p>
+        </header>
 
-    return (
-        <div className="p-4 max-w-md mx-auto text-center space-y-6">
-            <h1 className="text-2xl font-bold">🦠 Disease Identifier</h1>
-
-            <div className="rounded-lg overflow-hidden shadow-md">
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    className="w-full h-auto transform -scale-x-100"
+        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+          {/* --- Input Panel --- */}
+          <div className="space-y-6 rounded-xl bg-white p-6 shadow-lg">
+            <h2 className="text-xl font-bold text-slate-700">
+              1. Provide an Image
+            </h2>
+            <div className="aspect-video w-full overflow-hidden rounded-lg bg-slate-900">
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="h-full w-full object-contain"
                 />
-                <canvas ref={canvasRef} style={{ display: "none" }} />
-                <button
-                    onClick={captureImage}
-                    className="bg-blue-600 text-white w-full py-2 hover:bg-blue-700"
-                >
-                    📸 Capture Image
-                </button>
+              ) : (
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+              )}
+              <canvas ref={canvasRef} style={{ display: "none" }} />
             </div>
-
-            <input
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={captureImage}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800"
+              >
+                <CameraIcon className="h-5 w-5" />
+                <span>Capture</span>
+              </button>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-200"
+              >
+                <ArrowUpTrayIcon className="h-5 w-5" />
+                <span>Upload</span>
+              </button>
+              <input
                 type="file"
+                ref={fileInputRef}
                 accept="image/*"
                 onChange={handleFileChange}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-green-600 file:text-white hover:file:bg-green-700"
-            />
-
-            {imagePreview && (
-                <div className="mt-4">
-                    <h2 className="font-semibold mb-2">🖼️ Preview</h2>
-                    <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-full rounded border border-gray-300"
-                    />
-                </div>
-            )}
-
-            <button
+                className="hidden"
+              />
+            </div>
+            {imageBlob && (
+              <button
                 onClick={handleSendToAPI}
-                className="mt-4 bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center mx-auto"
-                disabled={!imageBlob || isLoading}
-            >
-                {isLoading ? (
-                    <>
-                        <svg
-                            className="animate-spin h-5 w-5 mr-2 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                        >
-                            <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                            ></circle>
-                            <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8v8H4z"
-                            ></path>
-                        </svg>
-                        Uploading...
-                    </>
-                ) : (
-                    "📤 Send to API"
-                )}
-            </button>
+                disabled={isLoading}
+                className="w-full inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isLoading ? "Analyzing..." : "Identify Disease"}
+              </button>
+            )}
+          </div>
 
-            {prediction && (
-                <>
-                    <div className="mt-4 text-red-700 font-bold text-xl">
-                        🧬 Disease: {prediction}
+          {/* --- Results Panel --- */}
+          <div className="space-y-6 rounded-xl bg-white p-6 shadow-lg">
+            <h2 className="text-xl font-bold text-slate-700">
+              2. View Results
+            </h2>
+            {isLoading ? (
+              <ResultsSkeleton />
+            ) : prediction ? (
+              <div className="space-y-6">
+                <div className="rounded-lg border border-amber-300 bg-amber-50 p-4">
+                  <div className="flex items-start gap-3">
+                    <BeakerIcon className="h-7 w-7 flex-shrink-0 text-amber-500" />
+                    <div>
+                      <h3 className="font-semibold text-amber-900">
+                        Detected Disease
+                      </h3>
+                      <p className="text-lg font-bold text-amber-900">
+                        {prediction}
+                      </p>
                     </div>
-
-                    <button
-                        onClick={handleGetSolution}
-                        disabled={isFetchingSolution}
-                        className="mt-2 bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 disabled:opacity-50"
-                    >
-                        {isFetchingSolution ? "Loading Solution..." : "💡 Get Solution"}
-                    </button>
-                </>
-            )}
-
-            {solution && (
-                <div className="mt-4 text-gray-800 bg-green-100 p-3 rounded">
-                    ✅ <strong>Solution:</strong> {solution}
+                  </div>
                 </div>
+
+                {!solution && (
+                  <button
+                    onClick={handleGetSolution}
+                    disabled={isFetchingSolution || prediction.includes("❌")}
+                    className="w-full inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isFetchingSolution ? "Finding Solution..." : "Get Recommended Solution"}
+                  </button>
+                )}
+
+                {solution && (
+                  <div className="rounded-lg border border-green-300 bg-green-50 p-4">
+                    <div className="flex items-start gap-3">
+                      <CheckBadgeIcon className="h-7 w-7 flex-shrink-0 text-green-600" />
+                      <div>
+                        <h3 className="font-semibold text-green-900">
+                          Recommended Solution
+                        </h3>
+                        <p className="mt-1 text-base text-green-800">
+                          {solution}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <button onClick={resetState} className="w-full text-sm text-slate-500 hover:text-slate-700">Start Over</button>
+
+              </div>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-200 p-8 text-center">
+                <BeakerIcon className="h-12 w-12 text-slate-300" />
+                <p className="mt-4 font-semibold text-slate-600">
+                  Your analysis results will appear here.
+                </p>
+              </div>
             )}
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
-export default DiseaseIdentifier;
+export default DiseaseIdentifier;  

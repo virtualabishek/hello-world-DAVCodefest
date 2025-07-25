@@ -47,7 +47,7 @@ const ShareBox = ({ postId, setShowShareBox }) => {
 
         <h3 className="text-lg font-bold text-slate-800">Share Post</h3>
         <p className="mt-1 text-sm text-slate-500">
-          Copy the link below to share this post with others.
+          Copy the link below to share this post.
         </p>
 
         <div className="relative mt-4">

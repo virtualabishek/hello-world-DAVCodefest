@@ -1,363 +1,174 @@
-
-
-import React, { useState, useEffect } from "react";
-import Comments from "./Comments";
-import { FaHandHoldingHeart, FaComment, FaShareAlt } from "react-icons/fa";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import ShareBox from "./ShareBox";
+import axios from "axios";
+import toast from "react-hot-toast";
+import {
+  HeartIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  ShareIcon,
+  PaperAirplaneIcon,
+} from "@heroicons/react/24/solid";
+import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
+import { userAuthStore } from "../../store/authStore";
 
-const Discussion = ({ totalPosts, user, posts, totalPages }) => {
-    const [like, setLike] = useState(false);
-    const [post, setPost] = useState(null);
-    const [ShowShareBox, setShowShareBox] = useState(false);
-    const [page, setPage] = useState(1);
+// --- This is now a fully functional comment form ---
+const PostCommentForm = ({ user, postId, onCommentPosted }) => {
+  const [newComment, setNewComment] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
-    useEffect(() => {
-        if (posts && posts.length > 0) {
-            setPost(posts[0]);
-        }
-    }, [posts]);
+  const handleSendComment = async (e) => {
+    e.preventDefault();
+    if (newComment.trim() === "") {
+      return toast.error("Comment cannot be empty.");
+    }
+    setIsSending(true);
+    try {
+      await axios.post("http://localhost:7180/community/comment", {
+        content: newComment,
+        postId: postId,
+        userId: user._id,
+      });
+      setNewComment("");
+      toast.success("Comment posted!");
+      // Optionally, you could call a function here to refetch the post data
+      if(onCommentPosted) onCommentPosted();
+    } catch (error) {
+      toast.error("Failed to post comment.");
+      console.error("Comment post error:", error);
+    } finally {
+      setIsSending(false);
+    }
+  };
 
-    const handleLike = () => {
-        setLike(!like);
-        console.log("Post liked:", post?._id);
-    };
+  return (
+    <form onSubmit={handleSendComment} className="flex items-center gap-2 pt-3">
+      <img
+        src={user?.avatar || "https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"}
+        alt="Your avatar"
+        className="h-9 w-9 flex-shrink-0 rounded-full bg-slate-200 object-cover"
+      />
+      <input
+        type="text"
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        placeholder="Write a comment..."
+        disabled={isSending}
+        className="block w-full rounded-full border-slate-300 bg-slate-100 px-4 py-2 text-sm focus:border-green-500 focus:ring-green-500 disabled:opacity-70"
+      />
+      <button
+        type="submit"
+        disabled={isSending || !newComment.trim()}
+        className="flex-shrink-0 rounded-full p-2 text-white bg-green-600 shadow-sm transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <PaperAirplaneIcon className="h-5 w-5" />
+      </button>
+    </form>
+  );
+};
 
-    const handleCommentView = (clickedPost) => {
-        setPost(clickedPost);
-    };
 
+const PostCard = ({ post, user, onShare }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const owner = post.owner;
+
+  return (
+    <div className="w-full overflow-hidden rounded-xl bg-white shadow-md">
+      <div className="p-4">
+        <div className="flex items-center gap-3">
+          <Link to={owner ? `/profile/${owner._id}` : "#"}>
+            <img
+              src={owner?.avatar || "https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"}
+              alt={owner?.name || owner?.username}
+              className="h-12 w-12 rounded-full bg-slate-200 object-cover"
+            />
+          </Link>
+          <div>
+            <Link
+              to={owner ? `/profile/${owner._id}` : "#"}
+              className="font-semibold text-slate-800 hover:underline"
+            >
+              {owner?.name || owner?.username || "Unknown User"}
+            </Link>
+            <p className="text-xs text-slate-500">
+              <Link to={`/post/${post._id}`} className="hover:underline">
+                {new Date(post.createdAt).toLocaleString()}
+              </Link>
+            </p>
+          </div>
+        </div>
+        <p className="mt-4 text-base text-slate-700">{post.content}</p>
+      </div>
+
+      {post.photo && (
+        <div className="w-full bg-slate-100">
+          <Link to={`/post/${post._id}`}>
+            <img
+              src={post.photo}
+              alt="Post content"
+              className="h-auto w-full max-h-[70vh] object-contain"
+            />
+          </Link>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between px-4 pt-3 text-sm text-slate-500">
+        <span>{post.likes?.length || 0} Likes</span>
+        <span>{post.comments?.length || 0} Comments</span>
+      </div>
+
+      <div className="m-2 flex justify-around border-t border-slate-100">
+        <button
+          onClick={() => setIsLiked(!isLiked)}
+          className={`flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-slate-100 ${
+            isLiked ? "text-red-500" : "text-slate-600"
+          }`}
+        >
+          {isLiked ? <HeartIconSolid className="h-5 w-5" /> : <HeartIconOutline className="h-5 w-5" />}
+          <span>Like</span>
+        </button>
+        <Link
+          to={`/post/${post._id}`}
+          className="flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
+        >
+          <ChatBubbleOvalLeftEllipsisIcon className="h-5 w-5" />
+          <span>Comment</span>
+        </Link>
+        <button
+          onClick={() => onShare(post)}
+          className="flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
+        >
+          <ShareIcon className="h-5 w-5" />
+          <span>Share</span>
+        </button>
+      </div>
+      
+      {user && (
+        <div className="border-t border-slate-100 p-4">
+          <PostCommentForm user={user} postId={post._id} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Discussion = ({ posts, user, onShare }) => {
+  const {user:loggedInUser}=userAuthStore();
+  if (!posts || posts.length === 0) {
     return (
-        <>
-            
-            <div className="flex  justify-between" >
-                <div> 
-                <section className="w-full max-w-5xl flex flex-wrap justify-center gap-2">
-                    {totalPosts === 0 ? (
-                        <p className="text-gray-600 text-lg mt-5">No posts available.</p>
-                    ) : (
-                        posts.map((p) => (
-                            <div
-                                key={p._id}
-                                className="w-full max-w-xl bg-white p-5 rounded-lg shadow-md transition-transform hover:-translate-y-1"
-                            >
-                                {/* Post Header */}
-                                <div className="flex items-center mb-4">
-                                    <a href={`/profile/${p.owner?._id}`}>
-                                        <img
-                                            src={p.owner?.avatar}
-                                            alt="Profile"
-                                            className="w-12 h-12 rounded-full object-cover mr-3"
-                                        />
-                                    </a>
-                                    <div>
-                                        <a
-                                            href={`/profile/${p.owner?._id}`}
-                                            className="text-lg font-semibold text-gray-800 hover:underline"
-                                        >
-                                            {p.owner?.username}
-                                        </a>
-                                        <p className="text-xs text-gray-500">
-                                            {new Date(p.createdAt).toLocaleDateString("en-US", {
-                                                year: "numeric",
-                                                month: "short",
-                                                day: "numeric",
-                                            })}{" "}
-                                            ..
-                                            {new Date(p.createdAt).toLocaleTimeString("en-US", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Post Content */}
-                                <p className="text-gray-800 mb-3">{p.title}</p>
-                                {p.photo && (
-                                    <img
-                                        src={p.photo}
-                                        alt="Post"
-                                        className="w-full h-64 object-cover rounded-md mb-3"
-                                    />
-                                )}
-
-                                {/* Post Actions */}
-                                <div className="flex justify-between border-t pt-3">
-                                    <button
-                                        className={`flex items-center text-white px-3 py-2 rounded-sm hover:underline ${like ? "bg-green-800" : "bg-green-400"}`}
-                                        onClick={handleLike}
-                                    >
-                                        <FaHandHoldingHeart className="mr-1" /> {p.likes}
-                                    </button>
-                                    <button
-                                        className="flex items-center gap-2 text-blue-600 hover:underline"
-                                        onClick={() => handleCommentView(p)}
-                                    >
-                                        <FaComment /> Comment
-                                    </button>
-                                    <button
-                                        className="flex items-center gap-2 text-blue-600 hover:underline"
-                                        onClick={() => {
-                                            setPost(p);
-                                            setShowShareBox(true);
-                                        }}
-                                    >
-                                        <FaShareAlt /> Share
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </section>
-</div>
-                {/* Comments Sidebar */}
-                                   <div className="sticky absolute  top-30 right-10 w-1/3 h-full  p-5 overflow-y-auto shadow-lg hidden md:block">
-                {post && <Comments post={post} />}
-                </div>
-
-                {/* Share Modal */}
-                {ShowShareBox && post && (
-                    <ShareBox postId={post._id} setShowShareBox={setShowShareBox} />
-                )}
-
-                {/* Pagination */}
-                {totalPosts > 0 && totalPages > 1 && (
-                    <div className="flex justify-center gap-3 mt-5">
-                        <button
-                            onClick={() => setPage(page - 1)}
-                            disabled={page === 1}
-                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-                        >
-                            Previous
-                        </button>
-                        <span>
-                            Page {page} of {totalPages}
-                        </span>
-                        <button
-                            onClick={() => setPage(page + 1)}
-                            disabled={page === totalPages}
-                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-                        >
-                            Next
-                        </button>
-                    </div>
-                )}
-
-                {/* Create Post Button */}
-                {user && (
-                    <Link to={`/post/${user._id}`}>
-                        <button className="fixed bottom-20 right-5 bg-green-700 text-white w-12 h-12 rounded-full text-2xl flex items-center justify-center shadow-md hover:bg-green-800 transition">
-                            +
-                        </button>
-                    </Link>
-                )}
-            </div>
-        </>
+      <div className="flex h-64 flex-col items-center justify-center rounded-xl bg-white p-5 text-center shadow-md">
+        <h3 className="text-xl font-semibold text-slate-700">The Feed is Quiet...</h3>
+        <p className="mt-2 text-slate-500">Why not be the first to share something with the community?</p>
+      </div>
     );
+  }
+
+  return (
+    <div className="mx-auto max-w-xl space-y-6">
+      {posts.map((post) => (
+        <PostCard key={post._id} post={post} user={loggedInUser} onShare={onShare} />
+      ))}
+    </div>
+  );
 };
 
 export default Discussion;
-
-
-
-
-
-// adasdasdasdas
-// import React from 'react'
-// import Comments from "./Comments"; // Assuming you have a Comments component for handling comments
-// import { useState,useEffect } from "react";
-// import { FaHandHoldingHeart } from "react-icons/fa";
-// import { Link } from "react-router-dom";
-// import { FaComment } from "react-icons/fa";
-// import { FaShareAlt } from "react-icons/fa";
-// import ShareBox from "./ShareBox"; // Assuming you have a ShareBox component for sharing posts
-// import { motion, AnimatePresence } from 'framer-motion';
-
-// const Discussion = ({ totalPosts, user, posts, totalPages }) => {
-
-//     const [like, setLike] = useState(false);
-//     const [post, setPost] = useState(null);
-//     const [ActiveComment, setActiveComment] = useState(null);
-//     const [ShowShareBox, setShowShareBox] = useState(false);
-//     // setposts(posts[0]);
-//     useEffect(() => {
-//         if (posts && posts.length > 0) {
-//             setPost(posts[0]);
-//             setActiveComment(posts[0])
-//         }
-//     }, [posts]); // Run this effect only when 'posts' changes
-//     const handleLike = () => {
-//         setLike(!like);
-//         console.log("Post liked:", post._id);
-//     };
-  
-
-//     const handleCommentView = (clickedPost) => {
-//         console.log("View comments for post:");
-//         console.log(post._id);  
-//         console.log("View comments for post:", post);
-//         setPost(clickedPost)
-//         console.log("updated post:", post);
-//     }
-
-
-
-//     return (
-
-//         <>
-//             <div className="flex  items-center justify-center mb-5">
-//                 <div className="flex justify-between">
-
-
-
-//                     <div>
-//                         <section className="w-full max-w-5xl flex flex-wrap justify-center  gap-5">
-//                             {totalPosts === 0 ? (
-//                                 <p className="text-gray-600 text-lg mt-5">No posts available.</p> // Graceful fallback
-//                             ) : (
-                                    
-                                    
-//                                 posts.map((post) => (
-//                                     <div
-//                                         key={post._id}
-//                                         className="w-full max-w-xl bg-white p-5 rounded-lg shadow-md transition-transform hover:-translate-y-1"
-//                                     >
-//                                         {/* Post Header */}
-//                                         <div className="flex items-center mb-4">
-//                                             <a href={`/profile/${post.owner ? post.owner._id : null}`}>
-//                                                 <img
-//                                                     src={post.owner.avatar}
-//                                                     alt="Profile"
-//                                                     className="w-12 h-12 rounded-full object-cover mr-3"
-//                                                 />
-//                                             </a>
-//                                             <div>
-//                                                 <a
-//                                                     href={`/profile/${post.owner ? post.owner._id : null}`}
-//                                                     className="text-lg font-semibold text-gray-800 hover:underline"
-//                                                 >
-//                                                     {post.owner.username}
-//                                                 </a>
-//                                                 <p className="text-xs text-gray-500">
-//                                                     {new Date(post.createdAt).toLocaleDateString("en-US", {
-//                                                         year: "numeric",
-//                                                         month: "short",
-//                                                         day: "numeric",
-//                                                     })}{" "}
-//                                                     ..
-//                                                     {new Date(post.createdAt).toLocaleTimeString("en-US", {
-//                                                         hour: "2-digit",
-//                                                         minute: "2-digit",
-//                                                     })}
-//                                                 </p>
-//                                             </div>
-//                                         </div>
-
-//                                         {/* Post Content */}
-//                                         <p className="text-gray-800 mb-3">{post.title}</p>
-//                                         {post.photo && (
-//                                             <img
-//                                                 src={post.photo}
-//                                                 alt="Post"
-//                                                 className="w-full h-64 object-cover rounded-md mb-3"
-//                                             />
-//                                         )}
-
-//                                         {/* Post Actions */}
-//                                         <div className="flex justify-between border-t pt-3">
-//                                             <button
-//                                                 className={`flex items-center text-white p-2 g-2 rounded-sm hover:underline ${like ? `bg-green-800` : `bg-green-400`
-//                                                     }`}
-//                                                 onClick={handleLike}
-//                                             >
-//                                                 <FaHandHoldingHeart /> : {post.likes}
-//                                             </button>
-//                                             <button className="flex items-center gap-2 text-blue-600 hover:underline"
-//                                                 onClick={()=> handleCommentView(post)}
-//                                             >
-//                                                 <FaComment/> Comment
-//                                             </button>
-//                                             <button className="text-blue-600 hover:underline">
-//                                                 <i className="fa-solid fa-link"></i>
-//                                             </button>
-//                                             <button className="flex items-center gap-2 text-blue-600 hover:underline"
-                                            
-//                                                 onClick={() => { 
-//                                                     setShowShareBox(true);
-//                                                 }}
-//                                             >
-//                                                 <FaShareAlt/> Share
-//                                             </button>
-
-//                                             {ShowShareBox && (
-                                                
-
-//                                                 <ShareBox postId={post._id} setShowShareBox={setShowShareBox} />
-
-                                            
-//                                             )}
-
-
-//                                         </div>
-//                                     </div>
-//                                 ))
-//                             )}
-//                         </section>
-//                     </div>
-//                     {/* comments */}
-//                     <div className="sticky absolute  top-30 right-10 w-1/3 h-full  p-5 overflow-y-auto shadow-lg hidden md:block">
-//                          {/* <AnimatePresence> */}
-
-//                      {post && <Comments post={post} className=""/>}
-//                             {/* </AnimatePresence> */}
-
-
-
-//                     </div>
-
-//                 </div>
-//                 {/* Posts Section */}
-
-
-
-
-
-
-
-
-//                 {/* Pagination Controls */}
-//                 {totalPosts > 0 && totalPages > 1 && (
-//                     <div className="flex justify-center gap-3 mt-5">
-//                         <button
-//                             onClick={() => setPage(page - 1)}
-//                             disabled={page === 1}
-//                             className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-//                         >
-//                             Previous
-//                         </button>
-//                         <span>
-//                             Page {page} of {totalPages}
-//                         </span>
-//                         <button
-//                             onClick={() => setPage(page + 1)}
-//                             disabled={!hasNextPage} // Disable Next if no posts exist
-//                             className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-//                         >
-//                             Next
-//                         </button>
-//                     </div>
-//                 )}
-
-//                 {/* Create Post Button */}
-//                 {user && (
-//                     <button className="fixed bottom-17 right-5 bg-green-700 text-white w-12 h-12 rounded-full text-2xl transition-transform transform md:bottom-5">
-//                         <Link to={`/post/${user._id}`}>+</Link>
-//                     </button>
-//                 )}
-//             </div>
-//         </>
-
-//     )
-// }
-// export default Discussion;
