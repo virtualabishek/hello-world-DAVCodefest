@@ -6,7 +6,8 @@ import path from "path";
 import cookieParser from "cookie-parser"
 import { errorHandler } from './middleware/error.middleware.js';
 import { community } from './router/community.route.js';
-
+import notification from './router/notification.route.js';
+import news from './router/news.route.js';
 
 
 
@@ -46,6 +47,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/user',userapi);
 app.use('/community', community)
+app.use('/notification', notification)
+app.use('/news', news)
 
 
 

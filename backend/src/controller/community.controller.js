@@ -1,4 +1,5 @@
 
+import { News } from "../models/news.model.js"
 import { CommunityPost } from "../models/post.model.js"
 import User from "../models/user.model.js"
 import { uploadoncloudinary } from "../utils/cloudinary.utility.js"
