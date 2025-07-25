@@ -3,6 +3,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import userapi from './router/user.route.js';
 import path from "path";
+import cookieParser from "cookie-parser"
+import { errorHandler } from './middleware/error.middleware.js';
 
 
 
