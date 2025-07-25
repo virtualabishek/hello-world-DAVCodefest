@@ -1,139 +1,130 @@
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
+import {
+  ArrowLeftIcon,
+  CalendarDaysIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/solid";
 
-import React from 'react';
-import { useParams } from 'react-router-dom';
+const LoadingSkeleton = () => (
+  <div className="mx-auto max-w-3xl animate-pulse p-4">
+    <div className="h-8 w-1/4 rounded-md bg-slate-200"></div>
+    <div className="mt-8 h-12 w-full rounded-md bg-slate-200"></div>
+    <div className="mt-4 h-6 w-1/2 rounded-md bg-slate-200"></div>
+    <div className="mt-8 aspect-video w-full rounded-xl bg-slate-200"></div>
+    <div className="mt-8 space-y-4">
+      <div className="h-5 w-full rounded-md bg-slate-200"></div>
+      <div className="h-5 w-full rounded-md bg-slate-200"></div>
+      <div className="h-5 w-11/12 rounded-md bg-slate-200"></div>
+      <div className="h-5 w-full rounded-md bg-slate-200"></div>
+      <div className="h-5 w-3/4 rounded-md bg-slate-200"></div>
+    </div>
+  </div>
+);
 
-import Comments from "./Comments"; // Assuming you have a Comments component for handling comments
-import { useState, useEffect } from "react";
-import { FaHandHoldingHeart } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { FaComment } from "react-icons/fa";
-import { FaShareAlt } from "react-icons/fa";
-import toast from 'react-hot-toast';
-import axios from 'axios';
-import { website_url } from '../../store/authStore'; // Import your user auth store
-const SinglePage = () => {
-    const { pageId } = useParams();
-    console.log("Page ID:", pageId);
-    const [post, setPost] = useState(null);
-        const [like, setLike] = useState(false);
-const [shareLink, setShareLink] = useState(``); // Assuming your app runs on localhost:3000
-    useEffect(() => {
+const ErrorDisplay = ({ message }) => (
+  <div className="flex flex-col items-center justify-center py-20 text-center">
+    <ExclamationTriangleIcon className="h-12 w-12 text-red-400" />
+    <h2 className="mt-4 text-xl font-semibold text-slate-800">
+      An Error Occurred
+    </h2>
+    <p className="mt-2 text-slate-500">{message}</p>
+    <Link
+      to="/news"
+      className="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-700"
+    >
+      <ArrowLeftIcon className="h-5 w-5" />
+      Back to News
+    </Link>
+  </div>
+);
 
-        const fetchPost = async () => {
-            try {
-                const response = await axios.get(`http://localhost:7180/community/get-community-post/${pageId}`);
-                console.log("Fetched post single page:", response.data);
-                if (!response.status === 200) {
-                    // throw new Error('Network response was not ok');
-                    toast.error('Failed to fetch post');
-                }
-                setPost(response.data.post);
-            } catch (error) {
-                console.error('Error fetching post:', error);
-            }
-        };
+const SingleNews = () => {
+  const { id } = useParams();
+  const [news, setNews] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-
-        fetchPost();
-
-
-    }, [])
-    
-    const handleLike = () => {
-        setLike(!like);
-        console.log("Post liked:", post._id);
+  useEffect(() => {
+    const fetchNews = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get(
+          `http://localhost:7180/news/getsingle-news/${id}`
+        );
+        setNews(response.data);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to fetch news article.");
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchNews();
+  }, [id]);
 
-    console.log("Post data:", post);
+  const splitIntoParagraphs = (text, wordsPerParagraph = 60) => {
+    if (!text) return [];
+    const words = text.split(" ");
+    const paragraphs = [];
+    for (let i = 0; i < words.length; i += wordsPerParagraph) {
+      paragraphs.push(words.slice(i, i + wordsPerParagraph).join(" "));
+    }
+    return paragraphs;
+  };
 
-
-
-
-    return (
-        <>
-            <div className="flex items-center flex-col justify-center mb-5      p-5 md:p-0 gap-15 md:flex-row">  
-            
-<div>
-            {post ? (<div
-                key={post._id}
-                className="w-full max-w-xl bg-white p-5 rounded-lg shadow-md transition-transform hover:-translate-y-1"
+  return (
+    <div className="min-h-screen bg-slate-50 py-8 md:py-12">
+      {loading ? (
+        <LoadingSkeleton />
+      ) : error ? (
+        <ErrorDisplay message={error} />
+      ) : (
+        news && (
+          <main className="mx-auto max-w-3xl px-4">
+            <Link
+              to="/news"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-green-600 transition-colors hover:text-green-800"
             >
-                <div className="flex items-center mb-4">
-                    <a href={`/profile/${post.owner ? post.owner._id : null}`}>
-                        <img
-                            src={post.owner.avatar}
-                            alt="Profile"
-                            className="w-12 h-12 rounded-full object-cover mr-3"
-                        />
-                    </a>
-                    <div>
-                        <a
-                            href={`/profile/${post.owner ? post.owner._id : null}`}
-                            className="text-lg font-semibold text-gray-800 hover:underline"
-                        >
-                            {post.owner.username}
-                        </a>
-                        <p className="text-xs text-gray-500">
-                            {new Date(post.createdAt).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                            })}{" "}
-                            ..
-                            {new Date(post.createdAt).toLocaleTimeString("en-US", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                            })}
-                        </p>
-                    </div>
+              <ArrowLeftIcon className="h-4 w-4" />
+              <span>Back to all news</span>
+            </Link>
+
+            <article className="mt-6">
+              <header>
+                <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 md:text-5xl">
+                  {news.title}
+                </h1>
+                <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
+                  <CalendarDaysIcon className="h-5 w-5" />
+                  <span>
+                    Published on {new Date(news.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
+              </header>
 
-                <p className="text-gray-800 mb-3">{post.title}</p>
-                {post.photo && (
-                    <img
-                        src={post.photo}
-                        alt="Post"
-                        className="w-full h-64 object-cover rounded-md mb-3"
-                    />
-                )}
-
-                <div className="flex justify-between border-t pt-3">
-                    <button
-                        className={`flex items-center text-white p-2 g-2 rounded-sm hover:underline ${like ? `bg-green-800` : `bg-green-400`
-                            }`}
-                        onClick={handleLike}
-                    >
-                        <FaHandHoldingHeart /> : {post.likes}
-                    </button>
-                    <button className="flex items-center gap-2 text-blue-600 hover:underline"
-                        // onClick={() => handleCommentView(post)}
-                    >
-                        <FaComment /> Comment
-                    </button>
-                    <button className="text-blue-600 hover:underline">
-                        <i className="fa-solid fa-link"></i>
-                    </button>
-                            <button className="flex items-center gap-2 text-blue-600 hover:underline"
-                                onClick={() => { 
-                                    console.log("Share post:", post._id);
-                                    setShareLink(`${website_url}/community/singlepage/${post._id}`);
-                                    console.log("Share link:", shareLink);
-                                }}>
-                        <FaShareAlt /> Share
-                    </button>
+              {news.image && (
+                <div className="mt-8 aspect-video w-full overflow-hidden rounded-xl bg-slate-200 shadow-lg">
+                  <img
+                    src={news.image}
+                    alt={news.title}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
-            </div>): <div className="flex items-center justify-center h-screen">
-                    <p className="text-gray-500 text-lg">Loading post...</p>
-                </div>}
-            </div>
-            
-            <div>
-                {post && <Comments post={post} className="" />}
-            </div>
-            </div>
-        </>
-)
+              )}
 
-}
+              <div className="prose prose-lg prose-slate mx-auto mt-8 max-w-none">
+                {splitIntoParagraphs(news.content).map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
+            </article>
+          </main>
+        )
+      )}
+    </div>
+  );
+};
 
-export default SinglePage;
+export default SingleNews;

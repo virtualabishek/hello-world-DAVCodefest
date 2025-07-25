@@ -1,48 +1,54 @@
-import { Link } from "react-router-dom"
-
+import { Link } from "react-router-dom";
+import {
+  ComputerDesktopIcon,
+  ChatBubbleLeftRightIcon,
+  AcademicCapIcon,
+  SparklesIcon,
+  CameraIcon,
+  ShieldExclamationIcon,
+  SignalIcon,
+  BanknotesIcon,
+  CurrencyDollarIcon,
+  Cog6ToothIcon,
+  ShoppingCartIcon,
+  NewspaperIcon,
+} from "@heroicons/react/24/outline";
 
 export default function MoreServices({ user }) {
-    const services = [
-        { name: "Farm Monitor", img: "https://img.icons8.com/?size=100&id=6421&format=png&color=000000", link: `/devicesetting/${user.devices}` },
+  const services = [
+    { name: "Farm Monitor", Icon: ComputerDesktopIcon, link: `/devicesetting/${user?.devices}` },
+    { name: "Friends Chat", Icon: ChatBubbleLeftRightIcon, link: "/chatting" },
+    { name: "Expert Chat", Icon: AcademicCapIcon, link: "/chat/expert" },
+    { name: "AI Helper", Icon: SparklesIcon, link: "/chat/ai" },
+    { name: "Plant ID", Icon: CameraIcon, link: "/service/plantidentifier" },
+    { name: "Disease ID", Icon: ShieldExclamationIcon, link: "/service/diseaseidentifier" },
+    { name: "Live Sensor", Icon: SignalIcon, link: `/devicesetting/${user?.devices}` },
+    { name: "Loan Form", Icon: BanknotesIcon, link: "/services/loan-form" },
+    { name: "Subsidy Info", Icon: CurrencyDollarIcon, link: "/services/subsidy" },
+    { name: "Device Setup", Icon: Cog6ToothIcon, link: `/devicesetting/${user?.devices}` },
+    { name: "My Purchases", Icon: ShoppingCartIcon, link: "/profile/purchases" },
+    { name: "News Feed", Icon: NewspaperIcon, link: "/news" },
+  ];
 
-        { name: "messenger (Friends)", img: "https://img.icons8.com/?size=100&id=20202&format=png&color=000000", link: `/chatting` },
-
-        { name: "messenger (Expert)", img: "https://img.icons8.com/?size=100&id=114492&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-
-        { name: "messenger (AI)", img: "https://img.icons8.com/?size=100&id=05zIO40VegUf&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-
-        { name: "Plant Identifier", img: "https://img.icons8.com/?size=100&id=aIYc9NMa4dUA&format=png&color=000000", link: `/service/plantidentifier` },
-        { name: "Disease identifier", img: "https://img.icons8.com/?size=100&id=14891&format=png&color=000000", link: `/service/diseaseidentifier` },
-
-        { name: "living presense", img: "https://img.icons8.com/?size=100&id=deuhxm4eQhCV&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-        { name: "loan Form", img: "https://img.icons8.com/?size=100&id=T91Rrpzq6USn&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-
-        { name: "Subsidy", img: "https://img.icons8.com/?size=100&id=ZdtLbU2ghsGV&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-        { name: "Device Setting", img: "https://img.icons8.com/?size=100&id=pb9OgJeV5LAm&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-        { name: "Purchase", img: "https://img.icons8.com/?size=100&id=AGpBy6HmyQf2&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-        { name: "News", img: "https://img.icons8.com/?size=100&id=111271&format=png&color=000000", link: `/news` },
-
-
-
-
-
-
-
-
-
-    ];
-
-    return (
-        <div className="w-80  bg-white rounded-xl shadow-lg m-2 p-4">
-            <h2 className="text-lg font-semibold mb-4">More Services</h2>
-            <div className="grid grid-cols-4 gap-4">
-                {services.map((service, idx) => (
-                    <Link to={`${service.link}`} key={idx} className="flex flex-col items-center text-center text-xs">
-                        <img src={service.img} alt={service.name} className="w-10 h-10" />
-                        <span className="mt-1">{service.name}</span>
-                    </Link>
-                ))}
+  return (
+    <div className="w-full rounded-xl bg-white p-4 shadow-lg sm:p-6">
+      <h3 className="px-2 text-lg font-bold text-slate-800">Your Services</h3>
+      <div className="mt-4 grid grid-cols-4 gap-2 sm:gap-4">
+        {services.map((service, idx) => (
+          <Link
+            to={service.link}
+            key={idx}
+            className="group flex flex-col items-center rounded-lg p-2 text-center transition-colors duration-200 hover:bg-slate-100"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 transition-colors group-hover:bg-green-200">
+              <service.Icon className="h-6 w-6 text-green-700" />
             </div>
-        </div>
-    );
+            <span className="mt-2 text-xs font-semibold text-slate-600">
+              {service.name}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
 }
