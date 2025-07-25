@@ -1,13 +1,13 @@
 import { uploadoncloudinary } from "../utils/cloudinary.utility.js";
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs"
-import { generateVerificationCOde } from "../utils/verficationToken.js";
-import { generateTokenAndSetCookie } from "../utils/verficationToken.js";
+import { generateVerificationCOde } from "../utils/verificationToken.js";
+import { generateTokenAndSetCookie } from "../utils/verificationToken.js";
 import { sendEmail } from "../utils/email.utility.js";
 import axios from "axios";
+import { sendNotification } from "../utils/notification.utility.js";
 
 
-import { sendNotification } from "../utils/notification.utlity.js";
 export const registerUser = async (req, res) => {
   const {  name, email, password, number } = req.body;
   try {

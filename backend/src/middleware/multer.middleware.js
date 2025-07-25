@@ -1,30 +1,31 @@
-export const generateVerificationCOde=()=>{
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
-    return Math.floor(100000+Math.random()*900000).toString()
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+const uploadDir = path.resolve(__dirname, "../uploads");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
- import jwt from "jsonwebtoken"
 
-export const generateTokenAndSetCookie = (res, userId) => {
-  try {
-   
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-      expiresIn: "7d",  // Token expires in 7 days
-    });
 
-    // Set token as an HTTP-only cookie
-    res.cookie("token", token, {
-      httpOnly: true,   // Cannot be accessed via JavaScript
-      secure: false,  // Set to true in production (for HTTPS)
-      sameSite: "lax",  // Protects against CSRF
-      maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days in milliseconds
-    });
-console.log("Token generated and cookie set successfully",token );
-    // Return the token string, not a Promise
-    return token;
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
 
-  } catch (error) {
-    console.error("Error generating token and setting cookie:", error);
-    throw new Error("Failed to generate token");
-  }
-};
+
+export const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+});
