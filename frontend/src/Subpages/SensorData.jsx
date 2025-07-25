@@ -1,94 +1,4 @@
-// import { useState, useEffect } from "react";
-// import { Flame, ShieldAlert, Wind, CloudLightning } from "lucide-react";
-// import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-// import "react-circular-progressbar/dist/styles.css";
-// import { userAuthStore } from "../store/authStore";
-// const SensorData = () => {
-//     const [sensorData, setSensorData] = useState({
-//         humidity: 80,
-//         moisture: 80,
-//         waterLevel: 80,
-//         fireAlert: true,
-//         securityBreach: true,
-//         smokeAlert: true,
-//         weatherAlert: true
-//     });
-//     const { deviceLogout } = userAuthStore();
-//     const handleDeviceLogout = () => {
-//         deviceLogout();
-//     }
-//     useEffect(() => {
-//         const interval = setInterval(() => {
-//             setSensorData(prevData => ({
-//                 ...prevData,
-//                 humidity: Math.floor(Math.random() * 101),
-//                 moisture: Math.floor(Math.random() * 101),
-//                 waterLevel: Math.floor(Math.random() * 101)
-//             }));
-//         }, 5000);
-//         return () => clearInterval(interval);
-//     }, []);
 
-//     const toggleAlert = (key) => {
-//         setSensorData(prevState => ({
-//             ...prevState,
-//             [key]: !prevState[key]
-//         }));
-//     };
-
-//     return (
-//         <div className="p-4 bg-white text-gray-900 rounded-lg shadow-lg max-w-xl mx-auto md:max-w-2xl lg:max-w-4xl">
-//             <div className="flex justify-between items-center mb-4">
-//                 <h2 className="text-xl font-bold">Farm Monitoring</h2>
-//                 <button
-//                 onClick={handleDeviceLogout}
-//                     className="bg-red-700 px-4 py-2 rounded-lg text-white text-sm font-semibold"> Disconnect Device</button>
-//             </div>
-
-//             <div className="grid grid-cols-3 gap-4 p-4 bg-gray-200 rounded-lg p-7">
-//                 {[{ label: "Humidity", value: sensorData.humidity },
-//                   { label: "Moisture", value: sensorData.moisture },
-//                   { label: "Water Level", value: sensorData.waterLevel }].map((sensor, index) => (
-//                     <div key={index} className="bg-white p-1 rounded-lg text-center shadow relative w-24 h-24 md:w-28 md:h-28">
-//                         <CircularProgressbar 
-//                             value={sensor.value} 
-//                             text={`${sensor.value}%`} 
-//                             styles={buildStyles({
-//                                 textSize: '12px',
-//                                 pathColor: "#3b82f6",
-//                                 textColor: '#111827',
-//                                 trailColor: '#e5e7eb'
-//                             })}
-//                         />
-//                         <p className="text-sm text-gray-600 mt-1">{sensor.label}</p>
-//                     </div>
-//                 ))}
-//             </div>
-
-//             <div className="grid grid-cols-4 gap-3 md:gap-15     mt-6  ">
-//                 {[{ label: "Fire Alert", icon: <Flame size={24} className="text-red-500 " />, status: sensorData.fireAlert, key: "fireAlert" },
-//                   { label: "Security Breach", icon: <ShieldAlert size={24} className="text-yellow-500" />, status: sensorData.securityBreach, key: "securityBreach" },
-//                   { label: "Smoke Alert", icon: <Wind size={24} className="text-blue-500" />, status: sensorData.smokeAlert, key: "smokeAlert" },
-//                   { label: "Weather Alert", icon: <CloudLightning size={24} className="text-green-500" />, status: sensorData.weatherAlert, key: "weatherAlert" }].map((alert, index) => (
-//                     <div key={index} className="flex flex-col items-center bg-gray-100 p-3 rounded-lg shadow relative w-20 h-24 md:w-28 md:h-28">
-//                         {alert.icon}
-//                         <p className="text-sm mt-1 font-semibold text-center ">{alert.label}</p>
-//                         <button 
-//                             onClick={() => toggleAlert(alert.key)} 
-//                             className={`absolute top-1 right-1 text-xs font-bold px-1 py-1 rounded-full ${
-//                                 alert.status ? "bg-green-500 text-white" : "bg-red-500 text-white"
-//                             }`}
-//                         >
-//                             {alert.status ? "ON" : "OFF"}
-//                         </button>
-//                     </div>
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default SensorData;
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { Flame, ShieldAlert, Wind, CloudLightning } from "lucide-react";
@@ -97,7 +7,7 @@ import "react-circular-progressbar/dist/styles.css";
 import { userAuthStore } from "../store/authStore";
 import axios from "axios"
 import { TiWeatherCloudy } from "react-icons/ti";
-const SensorData = ({ humidity }) => {
+const SensorData = ({ refetch }) => {
     const [sensorData, setSensorData] = useState({
         humidity: 0,
         moisture: 0,
@@ -108,76 +18,52 @@ const SensorData = ({ humidity }) => {
         // weatherAlert: false,
         // flameAlert: false,
     });
-    const[humidityint,setHumidityInt]=useState()
-const [weatherAlert,setweatherAlert]=useState({})
+    const [humidityint, setHumidityInt] = useState()
+    const [weatherAlert, setweatherAlert] = useState({})
     const [connectionStatus, setConnectionStatus] = useState('Connecting...');
     const { deviceLogout } = userAuthStore();
-    console.log("weatherAlert",weatherAlert)
+    console.log("weatherAlert", weatherAlert)
 
 
-// useEffect(() => {
-//     fetch(
-//       "https://api.openweathermap.org/data/2.5/forecast?q=Birgunj&units=metric&appid=5e0c4d7564f485afbd09ea6e9b55adb4"
-//     )
-//       .then((res) => res.json())
-//       .then((data) => {
-//           sethumidityint(data);
-//           console.log("humidityint",humidityint)
-//       })
-//       .catch((error) => console.error("Error fetching humidity:", error));
-    //   }, []);
-//     useEffect(async() => {
-//    await axios.get("https://api.openweathermap.org/data/2.5/forecast?q=Birgunj&units=metric&appid=5e0c4d7564f485afbd09ea6e9b55adb4")
-//       .then((response) => {
-//         // Extract humidity from the first forecast entry
-//           const humidity = response.data.list[0]?.main?.humidity;
-//           console.log("response",response)
-//           setHumidityInt(humidity);
-//           conbsole.log("response data:",humidityint)
-//         console.log("Humidity:", humidity);
-//       })
-//       .catch((error) => console.error("Error fetching humidity:", error));
-//   }, []);
-
-    //start
+        
     useEffect(() => {
-  const fetchHumidity = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:7180/user/weather"
-      );
+        const fetchHumidity = async () => {
+            try {
+                const response = await axios.get(
+                    "http://localhost:7180/user/weather"
+                );
 
-        console.log("Full API Response:", response.data);
-        //  const humiditymain = response.data.data.list[0]?.main?.humidity ;
-        //   console.log("humiditymain",humiditymain)
+                console.log("Full API Response:", response.data);
+                //  const humiditymain = response.data.data.list[0]?.main?.humidity ;
+                //   console.log("humiditymain",humiditymain)
 
-      // Ensure data exists before extracting humidity
-      if (response.data.data?.list?.length > 0) {
-          const humidity = response.data.data.list[0]?.main?.humidity ?? 80;
-         
-          setHumidityInt(humidity);
-          const weather = response.data.data.list[0]?.weather[0] ?? 80;
+                // Ensure data exists before extracting humidity
+                if (response.data.data?.list?.length > 0) {
+                    const humidity = response.data.data.list[0]?.main?.humidity ?? 80;
+
+                    setHumidityInt(humidity);
+                    const weather = response.data.data.list[0]?.weather[0] ?? 80;
 
 
-          setweatherAlert(weather)
-        console.log("Extracted Humidity:", humidity);
-      } else {
-        console.error("Humidity data not found in response");
-      }
-    } catch (error) {
-      console.error("Error fetching humidity:", error);
-    }
-  };
+                    setweatherAlert(weather)
+                    console.log("Extracted Humidity:", humidity);
+                } else {
+                    console.error("Humidity data not found in response");
+                }
+            } catch (error) {
+                console.error("Error fetching humidity:", error);
+            }
+        };
 
-  fetchHumidity(); // Call the async function
-}, []);
+        fetchHumidity(); // Call the async function
+    }, []);
 
-// Log the updated state value
-useEffect(() => {
-  console.log("Updated Humidity State:", humidityint);
-}, [humidityint]);
+    // Log the updated state value
+    useEffect(() => {
+        console.log("Updated Humidity State:", humidityint);
+    }, [humidityint]);
 
-    
+
 
 
 
@@ -234,6 +120,7 @@ useEffect(() => {
                 <h2 className="text-xl font-bold">Farm Monitoring</h2>
                 <button
                     onClick={deviceLogout}
+                    onCLick={() => refetch()}
                     className="bg-red-700 px-4 py-2 rounded-lg text-white text-sm font-semibold">
                     Disconnect Device
                 </button>
@@ -242,11 +129,11 @@ useEffect(() => {
 
             <div className="grid grid-cols-3 gap-4 p-4 bg-gray-200 rounded-lg p-7">
                 {[
-                                     { label: "Water Level", value: ((sensorData.waterLevel/622)*100) .toFixed(2)},
+                    { label: "Water Level", value: ((sensorData.waterLevel / 622) * 100).toFixed(2) },
 
-{ label: "Moisture", value: parseFloat((( (sensorData.moisture>3000 ?0: sensorData.moisture/ 1271.0)) * 100).toFixed(2)) },
+                    { label: "Moisture", value: parseFloat((((sensorData.moisture > 3000 ? 0 : sensorData.moisture / 1271.0)) * 100).toFixed(2)) },
 
-                    { label: "Humidity", value: humidityint||80 }
+                    { label: "Humidity", value: humidityint || 80 }
                 ].map((sensor, index) => (
                     <div key={index} className="bg-white p-1 rounded-lg text-center shadow relative w-24 h-24 md:w-28 md:h-28">
                         <CircularProgressbar
@@ -277,20 +164,20 @@ useEffect(() => {
                     label: "Smoke Alert",
                     active: sensorData.smokeAlert,
                     icon: <Wind className="text-gray-600" size={24} />
-                 },
-                // {
-                //     label: "Weather Alert",
-                //     active: sensorData.weatherAlert,
-                //     icon: <CloudLightning className="text-blue-600" size={24} />
-                // },
-                // {
-                //     label: "Flame Alert",
-                //     active: sensorData.flameAlert,
-                //     icon: <Flame className="text-orange-600" size={24} />
-                // }
+                },
+                    // {
+                    //     label: "Weather Alert",
+                    //     active: sensorData.weatherAlert,
+                    //     icon: <CloudLightning className="text-blue-600" size={24} />
+                    // },
+                    // {
+                    //     label: "Flame Alert",
+                    //     active: sensorData.flameAlert,
+                    //     icon: <Flame className="text-orange-600" size={24} />
+                    // }
                 ].map((sensor, index) => (
                     <div key={index} className={`p-4 rounded-lg flex flex-col text-center justify-center    ${sensor.active ? 'bg-red-100 border border-red-400' : 'bg-gray-100'}`}>
-                     <p className="flex justify-center">  {sensor.icon} </p> 
+                        <p className="flex justify-center">  {sensor.icon} </p>
                         <p className="text-sm font-semibold mt-2">{sensor.label}</p>
                         <p className={`text-sm md:text-lg font-bold ${sensor.active ? 'text-red-600' : 'text-gray-600'}`}>
                             {sensor.active ? "Active" : "Normal"}
@@ -298,13 +185,13 @@ useEffect(() => {
                     </div>
 
                 ))}
-                <div  className={"p-4 rounded-lg flex flex-col text-center justify-center bg-gray-100  "}>
-                     <p className="flex justify-center">  <TiWeatherCloudy className="text-blue-600" size={24} /></p> 
+                <div className={"p-4 rounded-lg flex flex-col text-center justify-center bg-gray-100  "}>
+                    <p className="flex justify-center">  <TiWeatherCloudy className="text-blue-600" size={24} /></p>
                     <p className="text-sm font-semibold mt-2">{weatherAlert.main}   {console.log("weather alreat main ", weatherAlert.main)} </p>
-                        <p className="text-sm md:text-lg font-bold  text-nowrap">
-                           {weatherAlert.description}
-                        </p>
-                    </div>
+                    <p className="text-sm md:text-lg font-bold  text-nowrap">
+                        {weatherAlert.description}
+                    </p>
+                </div>
             </div>
         </div>
     );

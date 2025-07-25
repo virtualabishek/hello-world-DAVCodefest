@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 
 
 export default function MoreServices({ user }) {
@@ -8,28 +8,28 @@ export default function MoreServices({ user }) {
         { name: "messenger (Friends)", img: "https://img.icons8.com/?size=100&id=20202&format=png&color=000000", link: `/chatting` },
 
         { name: "messenger (Expert)", img: "https://img.icons8.com/?size=100&id=114492&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-        
+
         { name: "messenger (AI)", img: "https://img.icons8.com/?size=100&id=05zIO40VegUf&format=png&color=000000", link: `/devicesetting/${user.devices}` },
 
-        { name: "Plant Identifier", img: "https://img.icons8.com/?size=100&id=aIYc9NMa4dUA&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-        { name: "Disease identifier", img: "https://img.icons8.com/?size=100&id=14891&format=png&color=000000", link: `/devicesetting/${user.devices}` },
+        { name: "Plant Identifier", img: "https://img.icons8.com/?size=100&id=aIYc9NMa4dUA&format=png&color=000000", link: `/service/plantidentifier` },
+        { name: "Disease identifier", img: "https://img.icons8.com/?size=100&id=14891&format=png&color=000000", link: `/service/diseaseidentifier` },
 
         { name: "living presense", img: "https://img.icons8.com/?size=100&id=deuhxm4eQhCV&format=png&color=000000", link: `/devicesetting/${user.devices}` },
         { name: "loan Form", img: "https://img.icons8.com/?size=100&id=T91Rrpzq6USn&format=png&color=000000", link: `/devicesetting/${user.devices}` },
 
         { name: "Subsidy", img: "https://img.icons8.com/?size=100&id=ZdtLbU2ghsGV&format=png&color=000000", link: `/devicesetting/${user.devices}` },
-        { name: "Device Setting", img: "https://img.icons8.com/?size=100&id=pb9OgJeV5LAm&format=png&color=000000",link: `/devicesetting/${user.devices}` },
+        { name: "Device Setting", img: "https://img.icons8.com/?size=100&id=pb9OgJeV5LAm&format=png&color=000000", link: `/devicesetting/${user.devices}` },
         { name: "Purchase", img: "https://img.icons8.com/?size=100&id=AGpBy6HmyQf2&format=png&color=000000", link: `/devicesetting/${user.devices}` },
         { name: "News", img: "https://img.icons8.com/?size=100&id=111271&format=png&color=000000", link: `/news` },
 
-        
 
 
 
 
 
 
-        
+
+
     ];
 
     return (
@@ -46,4 +46,3 @@ export default function MoreServices({ user }) {
         </div>
     );
 }
-  

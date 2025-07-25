@@ -1,4 +1,5 @@
-import {Routes,Route} from "react-router-dom"
+// import CommunityPosts from "./components/CommunityPosts";
+import { Routes, Route } from "react-router-dom"
 import MainDashboard from "./Pages/MainDashboard";
 import Chat from "./Pages/Chat";
 import Home from "./Pages/Home";
@@ -13,7 +14,7 @@ import VerifyOTP from "./Subpages/verify-otp/Verifyotp";
 import { Navigate } from 'react-router-dom'
 import { userAuthStore } from "./store/authStore";
 import LoadingPage from "./Subpages/LoadingPage/LoadingPage";
-import {Toaster} from "react-hot-toast"
+import { Toaster } from "react-hot-toast"
 import { useEffect } from "react";
 import ProfileUserId from "./Subpages/ProfileUserId";
 import FriendList from "./Subpages/Friendlist";
@@ -34,91 +35,94 @@ import DeviceSetting from "./Subpages/DeviceSetting/DeviceSetting";
 import SinglePage from "./Pages/Community/SinglePage";
 import { useState } from "react";
 import TransactionHistory from "./Subpages/Transaction/TransactionHistory";
+import PlantIdentifier from "./Subpages/Plantidentifier/Plantidentifier";
+import DiseaseIdentifier from "./Subpages/DiseaseIdentifier/DiseaseIdentifier";
 
-  const ProtectedRoute=({children})=>{
-  const {isAuthenticated ,user}=userAuthStore();
-  if(!isAuthenticated){
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, user } = userAuthStore();
+  if (!isAuthenticated) {
     return <Navigate to='/login' replace />
   }
- if(!user.isVerified){
-  return <Navigate to='/verify-otp' replace />
- }
- return children
-
+  if (!user.isVerified) {
+    return <Navigate to='/verify-otp' replace />
   }
-  
-  const RedirectAutheticatedUser=({children})=>{
-  const {isAuthenticated,user}=userAuthStore()
-console.log(user)
-  if(isAuthenticated&& user.isVerified){
-    return <Navigate to="/" replace/>
+  return children
+
+}
+
+const RedirectAutheticatedUser = ({ children }) => {
+  const { isAuthenticated, user } = userAuthStore()
+  console.log(user)
+  if (isAuthenticated && user.isVerified) {
+    return <Navigate to="/" replace />
   }
   return children
 }
-  const RedirectunadminUser=({children})=>{
-  const {isAuthenticated,user}=userAuthStore()
-console.log(user)
-  if(isAuthenticated&& !user.role==="admin"){
-    return <Navigate to="/" replace/>
+const RedirectunadminUser = ({ children }) => {
+  const { isAuthenticated, user } = userAuthStore()
+  console.log(user)
+  if (isAuthenticated && !user.role === "admin") {
+    return <Navigate to="/" replace />
   }
   return children
 }
 const App = () => {
-  const { isCheckingAuth, checkAuth, isAuthenticated, user, fetchUnreadNotifications, unreadNotifications }=userAuthStore()
+  const { isCheckingAuth, checkAuth, isAuthenticated, user, fetchUnreadNotifications, unreadNotifications } = userAuthStore()
   const [triggerNotificationFetch, setTriggerNotificationFetch] = useState(false);
-  useEffect(()=>{
+  useEffect(() => {
     checkAuth()
     fetchUnreadNotifications()
 
-    if(triggerNotificationFetch){
+    if (triggerNotificationFetch) {
       fetchUnreadNotifications()
       setTriggerNotificationFetch(false);
     }
 
   }, [checkAuth, fetchUnreadNotifications, triggerNotificationFetch])
-  console.log("authentice",isAuthenticated)
-  console.log("user",user)
+  console.log("authentice", isAuthenticated)
+  console.log("user", user)
 
-  if(isCheckingAuth){
-    return <LoadingPage/>
+  if (isCheckingAuth) {
+    return <LoadingPage />
   }
   return (
     <div >
-   
-<div className="hidden md:flex md:mb-[70px] sticky top-0 z-50 bg-white shadow-md">
+
+      <div className="hidden md:flex md:mb-[70px] sticky top-0 z-50 bg-white shadow-md">
         <UpperNavigation unreadNotifications={unreadNotifications} />
-</div>
+      </div>
 
       <Routes>
         <Route path="/" element={<Home unreadNotifications={unreadNotifications} />} />
         <Route path="/dashboard" element={<MainDashboard />} />
         <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-                <Route path="/socketio" element={<SocketIO />} />
+        <Route path="/socketio" element={<SocketIO />} />
 
         <Route path="/community" element={<Community />} />
-                <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<RedirectAutheticatedUser><Login /></RedirectAutheticatedUser>} />
-        <Route path="/signup" element={<RedirectAutheticatedUser><Signup /> </RedirectAutheticatedUser> } />
-         <Route path="/verify-otp" element={ <VerifyOTP /> } />
+        <Route path="/signup" element={<RedirectAutheticatedUser><Signup /> </RedirectAutheticatedUser>} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/friends/:userId" element={<FriendList />} />
-        
-        <Route path="/news" element={<News />} />
-                <Route path="/marketplace" element={<MarketPlace />} />
 
-         <Route path="/news/:id" element={<SingleNews />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/marketplace" element={<MarketPlace />} />
+
+        <Route path="/news/:id" element={<SingleNews />} />
 
 
 
         <Route path="/profile/:profileID" element={<ProfileUserId />} />
 
         <Route path="/post/:userId" element={<Postform />} />
-                <Route path="/sensordata" element={<SensorData />} />
+        <Route path="/sensordata" element={<SensorData />} />
 
         <Route path="/notification/:userId" element={<Notification setTriggerNotificationFetch={setTriggerNotificationFetch} />} />
-                <Route path="/newspost/:userId" element={<RedirectunadminUser><NewsPostForm /> </RedirectunadminUser>} />
+        <Route path="/newspost/:userId" element={<RedirectunadminUser><NewsPostForm /> </RedirectunadminUser>} />
         <Route path="/addproduct" element={<AddProductForm />} />
 
-      {/* <Route */}
+        {/* <Route */}
         <Route path="/marketplace/:id" element={<ProductDetail />} />
 
         <Route path="/payment-form/success" element={<Success />} />
@@ -129,22 +133,25 @@ const App = () => {
         <Route path="/community/singlePage/:pageId" element={<SinglePage />} />
 
         <Route path="/transaction/history" element={<TransactionHistory />} />
+        {/* transaction history remainig */}
+        <Route path="/service/plantidentifier" element={<PlantIdentifier />} />
 
-        
 
-        
-        
-        
+        <Route path="/service/diseaseidentifier" element={<DiseaseIdentifier />} />
 
-        
+
+
+
+
+
 
 
       </Routes>
-          <Toaster/>
+      <Toaster />
 
 
-<div className="flex md:flex md:mb-[70px] sticky mt-12   z-50 bg-white shadow-md md:hidden"> <BottomNavigation/>
-</div>
+      <div className="flex md:flex md:mb-[70px] sticky mt-12   z-50 bg-white shadow-md md:hidden"> <BottomNavigation />
+      </div>
 
     </div>
   );
