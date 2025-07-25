@@ -5,6 +5,8 @@ import userapi from './router/user.route.js';
 import path from "path";
 import cookieParser from "cookie-parser"
 import { errorHandler } from './middleware/error.middleware.js';
+import { community } from './router/community.route.js';
+
 
 
 
@@ -43,6 +45,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Set up routes
 
 app.use('/user',userapi);
+app.use('/community', community)
 
 
 
