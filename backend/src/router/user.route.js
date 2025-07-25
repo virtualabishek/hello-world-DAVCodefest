@@ -22,9 +22,6 @@ router.post("/logout", logout)
 router.get("/home", Home)
 router.get("/weather",weatherAPI)
 
-// comment 
-
-
 router.post("/add-friend/:friendId", handleAddFriend)
 router.get("/get-friend/:userId",getFriendList)
 router.get("/:userId", async (req, res) => {
