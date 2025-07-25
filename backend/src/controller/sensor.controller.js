@@ -5,7 +5,7 @@ import IoTDevice from "../models/iotDevice.model.js";
 import PIRSensorData from "../models/pirSensor.model.js";
 import SoilMoistureSensorData from "../models/soilMoisturizer.model.js";
 import User from "../models/user.model.js";
-import WaterLevelSensorData from "../models/waterLevel.model.js";
+import WaterLevelSensorData from "../models/WaterLevel.model.js";
 
 export const handleWaterLevel = async (req, res) => {
   const { deviceId, level } = req.body; // Get deviceId and water level from request body

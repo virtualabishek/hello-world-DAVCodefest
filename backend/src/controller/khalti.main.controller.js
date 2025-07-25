@@ -1,7 +1,7 @@
 import { Payment } from "../models/payment.model.js";
 import { PurchasedItem } from "../models/purchasedItem.model.js";
 import User from "../models/user.model.js";
-import { sendNotification } from "../utils/notification.utlity.js";
+import { sendNotification } from "../utils/notification.utility.js";
 import {
   initializeKhaltiPayment,
   verifyKhaltiPayment,

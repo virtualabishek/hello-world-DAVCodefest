@@ -1,8 +1,7 @@
 import React from 'react'
-// import { userAuthStore } from '../../Store/authStore'
 import { userAuthStore } from '../store/authStore';
 import LoggedUser from './profile/LoggedUser';
-import NonLoggedUser from './profile/NonLoggedUser';
+import NonLoggedUser from './profile/NonLogged';
 const Profile = () => {
   
 

@@ -1,4 +1,3 @@
-// import CommunityPosts from "./components/CommunityPosts";
 import {Routes,Route} from "react-router-dom"
 import MainDashboard from "./Pages/MainDashboard";
 import Chat from "./Pages/Chat";
@@ -130,6 +129,15 @@ const App = () => {
         <Route path="/community/singlePage/:pageId" element={<SinglePage />} />
 
         <Route path="/transaction/history" element={<TransactionHistory />} />
+
+        
+
+        
+        
+        
+
+        
+
 
       </Routes>
           <Toaster/>

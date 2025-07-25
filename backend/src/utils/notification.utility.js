@@ -17,7 +17,7 @@ export const sendNotification = async ({ userId, topic, message, image }) => {
             image: image || null, 
         });
 
-        await notification.save(); // Save to database
+        await notification.save(); 
         console.log("✅ Notification sent:", notification);
         return { success: true, notification };
     } catch (error) {

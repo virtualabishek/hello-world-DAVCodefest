@@ -30,6 +30,9 @@ router.get("/get-friend/:userId",getFriendList)
 router.get("/:userId", async (req, res) => {
   try {
     const user = await User.findById(req.params.userId).populate("communityPosts");
+    if (!req.user) {
+  return res.status(401).json({ message: "Not authenticated" });
+}
     if (!user) return res.status(404).json({ error: "User not found" });
 
     res.json(user);
