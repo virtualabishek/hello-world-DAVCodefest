@@ -158,7 +158,6 @@ export const handleTexttoText = async (req, res) => {
     );
     console.log("chatCompletion.choices[0]", chatCompletions.choices[0]);
 
-    // Extract only the content property to avoid TypeError
     const { thinkContent, responseContent } = extractSections(
       chatCompletions.choices[0].message.content
     );
