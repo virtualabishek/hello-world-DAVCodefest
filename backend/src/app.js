@@ -30,11 +30,17 @@ app.set("views", path.join(process.cwd(), "./src/views"));
 
 app.use(express.static('public'));
 
+// app.use(
+//   cors({
+//     origin: ["http://localhost:8000","http://localhost:5173", " http://192.168.1.118:8170","http://192.168.154.34:8170"],
+
+//     credentials: true, 
+//   })
+// );
 app.use(
   cors({
-    origin: ["http://localhost:8000","http://localhost:5173", " http://192.168.1.118:8170","http://192.168.154.34:8170"],
-
-    credentials: true, 
+    origin: true, // Reflects the request origin
+    credentials: true,
   })
 );
 

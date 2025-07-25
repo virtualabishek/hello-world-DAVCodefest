@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "IOT",
+			"path": "../IOT"
+		}
+	],
+	"settings": {}
+}
