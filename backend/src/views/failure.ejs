@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Failed - Khalti</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(to bottom right, #fef2f2, #fffaf0);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        animation: fadeIn 0.8s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .container {
+        max-width: 600px;
+        width: 100%;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+      }
+
+      .container:hover {
+        transform: translateY(-5px);
+      }
+
+      .header {
+        background: linear-gradient(to right, #dc2626, #ea580c);
+        color: white;
+        text-align: center;
+        padding: 30px 20px;
+      }
+
+      .icon-box {
+        background: #fee2e2;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .icon-box span {
+        font-size: 40px;
+        color: #dc2626;
+      }
+
+      .header h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .go-back {
+        text-align: center;
+        margin-top: 25px;
+      }
+
+      .go-back a {
+        padding: 12px 24px;
+        background: #dc2626;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+
+      .go-back a:hover {
+        background: #b91c1c;
+        transform: translateY(-2px);
+      }
+
+      .footer {
+        text-align: center;
+        padding: 16px;
+        font-size: 13px;
+        color: #6b7280;
+      }
+
+      .footer a {
+        color: #dc2626;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="icon-box">
+          <span>✖</span>
+        </div>
+        <h1>Payment Failed</h1>
+        <p>Unfortunately, your transaction could not be completed</p>
+      </div>
+
+      <div class="go-back">
+        <a href="http://localhost:5173">← Go Back</a>
+      </div>
+
+      <div class="footer">
+        Need help? Contact
+        <a href="mailto:support@khalti.com">support@khalti.com</a>
+      </div>
+    </div>
+  </body>
+</html>
