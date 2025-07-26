@@ -1,9 +1,7 @@
 import {
   EllipsisVerticalIcon,
   PaperAirplaneIcon,
-  PhoneIcon,
   SparklesIcon,
-  VideoCameraIcon,
 } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
@@ -11,18 +9,20 @@ import ReactMarkdown from "react-markdown";
 import TextareaAutosize from "react-textarea-autosize";
 import remarkGfm from "remark-gfm";
 import { userAuthStore } from "../store/authStore";
+import { useTranslation } from "react-i18next";
 
 function stripThinkSection(text) {
   return text.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
 }
 
 const Chat = () => {
+  const { t } = useTranslation();
   const { user } = userAuthStore();
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: "AI",
-      message: "Hello! How can I assist you with your farming today?",
+      message: t("chat.greeting", "Hello! How can I assist you with your farming today?"),
       image: "/images/logo.png",
     },
   ]);
@@ -79,8 +79,9 @@ const Chat = () => {
   }, [messages, isLoading]);
 
   return (
-    <div className="flex h-screen flex-col bg-slate-100">
-      <header className="flex-shrink-0 flex items-center justify-between border-b border-slate-200 bg-white p-4">
+    <div className="flex flex-col h-[calc(100vh-64px)] bg-slate-100">
+      {/* Header - fits under navbar, sticky on top */}
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-green-100">
@@ -89,25 +90,19 @@ const Chat = () => {
             <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-white bg-green-500"></span>
           </div>
           <div>
-            <h1 className="font-bold text-slate-800">saralKrishi Assistant</h1>
-            <p className="text-sm text-green-600">Online</p>
+            <h1 className="font-bold text-slate-800">{t('chat.title', 'saralKrishi Assistant')}</h1>
+            <p className="text-sm text-green-600">{t('chat.online', 'Online')}</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          {/* <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100">
-            <PhoneIcon className="h-6 w-6" />
-          </button>
-          <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100">
-            <VideoCameraIcon className="h-6 w-6" />
-          </button> */}
           <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100">
             <EllipsisVerticalIcon className="h-6 w-6" />
           </button>
         </div>
       </header>
 
-      <main className="flex-grow overflow-y-auto p-4 sm:p-6">
-        <div className="mx-auto max-w-3xl space-y-6">
+      <main className="flex-1 overflow-y-auto px-2 py-4 sm:px-6">
+        <div className="mx-auto max-w-2xl space-y-6">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -165,11 +160,12 @@ const Chat = () => {
         </div>
       </main>
 
-      <footer className="flex-shrink-0 border-t border-slate-200 bg-white p-2">
-        <div className="mx-auto max-w-3xl">
+      {/* Footer - input area, sticky at bottom, always visible */}
+      <footer className="sticky bottom-0 z-10 border-t border-slate-200 bg-white px-2 py-2 shadow-sm">
+        <div className="mx-auto max-w-2xl">
           <form
             onSubmit={handleSendMessage}
-            className="flex items-end gap-2 rounded-xl border border-slate-300 p-2 focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500"
+            className="flex items-end gap-2 rounded-xl border border-slate-300 p-2 focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500 bg-white"
           >
             <TextareaAutosize
               value={userInput}
@@ -180,7 +176,7 @@ const Chat = () => {
                   handleSendMessage(e);
                 }
               }}
-              placeholder="Type your message..."
+              placeholder={t('chat.placeholder', 'Type your message...')}
               className="w-full flex-1 resize-none border-none bg-transparent px-2 py-1.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0"
               minRows={1}
               maxRows={5}
@@ -190,6 +186,7 @@ const Chat = () => {
               type="submit"
               disabled={isLoading || !userInput.trim()}
               className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-green-600 text-white shadow-sm transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label={t('chat.send', 'Send')}
             >
               <PaperAirplaneIcon className="h-5 w-5" />
             </button>
