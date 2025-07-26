@@ -115,7 +115,7 @@ const DiseaseIdentifier = () => {
     formData.append("file", imageBlob);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/ai/getplantdisease", {
+      const res = await fetch("http://127.0.0.1:8080/ai/getplantdisease", {
         method: "POST",
         body: formData,
       });

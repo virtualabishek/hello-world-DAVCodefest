@@ -1,11 +1,11 @@
 #include "secrets.h"
 
 // // WiFi credentials
-// const char* WIFI_SSID = "rupeshkd_fbrgj_2";
-// const char* WIFI_PASSWORD = "CLB439A11A";
+const char* WIFI_SSID = "rupeshkd_fbrgj_2";
+const char* WIFI_PASSWORD = "CLB439A11A";
 
 // // WebSocket server configuration
-const char* SERVER_URL = "10.33.217.19";
+const char* SERVER_URL = "10.46.4.19";
 const int SERVER_PORT = 7180;
 const int ESPSERVER_PORT = 8170;
 

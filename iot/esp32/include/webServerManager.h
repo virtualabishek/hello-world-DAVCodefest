@@ -1,5 +1,6 @@
 #ifndef WEBSERVER_MANAGER_H
 #define WEBSERVER_MANAGER_H
+void setupWiFi(const char* ssid, const char* password);
 
 void setupAPMode();
 void setUpWebServerManager();

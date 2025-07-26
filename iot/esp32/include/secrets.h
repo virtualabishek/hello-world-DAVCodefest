@@ -4,8 +4,8 @@
 #include <Arduino.h>
 
 // // WiFi credentials
-// extern const char* WIFI_SSID;
-// extern const char* WIFI_PASSWORD;
+extern const char* WIFI_SSID;
+extern const char* WIFI_PASSWORD;
 
 // // WebSocket server configuration
 extern const char* SERVER_URL;  // Server URL for WebSocket connection

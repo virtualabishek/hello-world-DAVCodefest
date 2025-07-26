@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include "secrets.h"
 
-void setupWiFii(const char* WIFI_SSID, const char* WIFI_PASSWORD) {
+void  setupWiFii(const char* WIFI_SSID, const char* WIFI_PASSWORD) {
   unsigned long connectStart = 0;
   unsigned long retryWaitStart = 0;
   bool tryingToConnect = false;

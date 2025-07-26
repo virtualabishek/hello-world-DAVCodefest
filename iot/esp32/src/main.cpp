@@ -14,7 +14,7 @@ const unsigned long interval = 40000; //
 void setup() {
 Serial.begin(921600); // Initialize serial communication at 9600 baud rate
 Serial.println("Hello, World!"); // Print "Hello, World!" to the serial monitor
-// setupWiFi(); // Call the setupWiFi function to initialize WiFi
+// setupWiFi(WIFI_SSID,WIFI_PASSWORD); // Call the setupWiFi function to initialize WiFi
 setupAPMode();
 setUpWebServerManager();
 setupMqtt();
