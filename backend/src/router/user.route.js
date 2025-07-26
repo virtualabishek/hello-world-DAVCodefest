@@ -24,13 +24,13 @@ router.get("/weather",weatherAPI)
 
 router.post("/add-friend/:friendId", handleAddFriend)
 router.get("/get-friend/:userId",getFriendList)
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId).populate("communityPosts");
-    if (!req.user) {
-  return res.status(401).json({ message: "Not authenticated" });
-}
-    if (!user) return res.status(404).json({ error: "User not found" });
+    // if (!req.user) {
+    //   return res.status(401).json({ message: "Not authenticated" });
+    // }
+    // if (!user) return res.status(404).json({ error: "User not found" });
 
     res.json(user);
   } catch (error) {
