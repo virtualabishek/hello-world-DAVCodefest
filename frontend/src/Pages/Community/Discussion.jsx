@@ -91,8 +91,8 @@ const Discussion = ({ totalPosts, user, posts, totalPages }) => {
                 </button>
               </div>
 
-              {/* Comments always visible under the post, with scroll if too many */}
-              <div className="mt-4 max-h-64 overflow-y-auto rounded border border-slate-100 bg-slate-50 p-2">
+              {/* Comments always visible under the post, let Comments handle scroll */}
+              <div className="mt-4 rounded border border-slate-100 bg-slate-50 p-2">
                 <Comments post={p} user={user} />
               </div>
             </div>

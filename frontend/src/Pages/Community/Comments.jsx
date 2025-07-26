@@ -35,45 +35,47 @@ const Comments = ({ post, user }) => {
   };
 
   return (
-    <div className="w-full bg-gray-50 p-4 rounded-lg shadow-md">
+    <div className="w-full bg-gray-50 p-4 rounded-lg shadow-md flex flex-col">
       <h3 className="text-lg font-bold text-gray-700 mb-4">{t("comments.title", "Comments")}</h3>
-      <div className="h-64 overflow-y-scroll">
-        {comments && comments.length > 0 ? (
-          comments.map((comment) => (
-            <div key={comment._id} className="mb-4 border-b-2 pb-4">
-              <div className="flex items-start gap-3">
-                <img
-                  src={comment.userId.avatar}
-                  alt="Avatar"
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-                <div>
-                  <p className="font-semibold text-gray-800">
-                    {comment.userId.username}
-                  </p>
+      <div className="flex-1 min-h-0">
+        <div className="max-h-56 overflow-y-auto pr-1">
+          {comments && comments.length > 0 ? (
+            comments.map((comment) => (
+              <div key={comment._id} className="mb-4 border-b-2 pb-4">
+                <div className="flex items-start gap-3">
+                  <img
+                    src={comment.userId.avatar}
+                    alt="Avatar"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
                   <div>
-                    <p className="text-sm text-gray-600">{comment.content}</p>
-                    <div className="flex items-center gap-6 mt-2">
-                      <p className="flex items-center gap-2"><FaHeart />{comment.like}</p>
-                      <p className="flex items-center gap-2"><IoIosHeartDislike />{comment.dislike}</p>
+                    <p className="font-semibold text-gray-800">
+                      {comment.userId.username}
+                    </p>
+                    <div>
+                      <p className="text-sm text-gray-600">{comment.content}</p>
+                      <div className="flex items-center gap-6 mt-2">
+                        <p className="flex items-center gap-2"><FaHeart />{comment.like}</p>
+                        <p className="flex items-center gap-2"><IoIosHeartDislike />{comment.dislike}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-sm text-gray-500">{t("comments.noComments", "No comments yet.")}</p>
-        )}
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">{t("comments.noComments", "No comments yet.")}</p>
+          )}
+        </div>
       </div>
-      <form className="flex justify-between p-3" onSubmit={handleSendComment}>
+      <form className="flex justify-between p-3 pt-4" onSubmit={handleSendComment}>
         <input
           placeholder={t("comments.addPlaceholder", "Add a comment...")}
-          className="border-none flex-1"
+          className="border-none flex-1 bg-white rounded px-3 py-2 mr-2 shadow-sm focus:outline-none"
           value={sendComment}
           onChange={(e) => setSendComment(e.target.value)}
         />
-        <button type="submit" className="text-white bg-green-700 p-2 rounded">
+        <button type="submit" className="text-white bg-green-700 p-2 rounded shadow-sm">
           {t("comments.send", "Send")}
         </button>
       </form>
