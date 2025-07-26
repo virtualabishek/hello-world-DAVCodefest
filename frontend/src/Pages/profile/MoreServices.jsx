@@ -19,7 +19,7 @@ export default function MoreServices({ user }) {
     { name: "Farm Monitor", Icon: ComputerDesktopIcon, link: `/devicesetting/${user?.devices}` },
     { name: "Friends Chat", Icon: ChatBubbleLeftRightIcon, link: "/chatting" },
     { name: "Expert Chat", Icon: AcademicCapIcon, link: "/chat/expert" },
-    { name: "AI Helper", Icon: SparklesIcon, link: "/chat/ai" },
+    { name: "AI Helper", Icon: SparklesIcon, link: "/chat" },
     { name: "Plant ID", Icon: CameraIcon, link: "/service/plantidentifier" },
     { name: "Disease ID", Icon: ShieldExclamationIcon, link: "/service/diseaseidentifier" },
     { name: "Live Sensor", Icon: SignalIcon, link: `/devicesetting/${user?.devices}` },

@@ -63,7 +63,6 @@ const Chat = () => {
         id: messages.length + 2,
         sender: "AI",
         message: aiResponse,
-        // image: "navbarimg/pic1.png",
         image:"https://img.icons8.com/?size=100&id=q7wteb2_yVxu&format=png&color=000000"
       };
       setMessages((prevMessages) => [...prevMessages, newAIMessage]);
