@@ -80,5 +80,24 @@
   "weather": "Weather",
   "alert": "Alert!",
   "normal": "Normal"
+},
+"community": {
+  "title": "Community",
+  "welcome": "Welcome to the saralKrishi Community",
+  "publicGroup": "Public Group",
+  "posts": "posts",
+  "shareGroup": "Share Group",
+  "joined": "Joined",
+  "tabs": {
+    "discussion": "Discussion",
+    "media": "Media",
+    "people": "People"
+  },
+  "search": "Search",
+  "moreOptions": "More options",
+  "loading": "Loading feed...",
+  "comingSoon": "This section is coming soon.",
+  "loadMore": "Load More Posts",
+  "createPost": "Create a new post"
 }
 }
