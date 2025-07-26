@@ -17,7 +17,7 @@ void setupWiFii(const char* WIFI_SSID, const char* WIFI_PASSWORD) {
       tryingToConnect = true;
     }
 
-    // Check if WiFi connected
+    // Check if WiFi connected 
     if (WiFi.status() == WL_CONNECTED) {
       break;
     }

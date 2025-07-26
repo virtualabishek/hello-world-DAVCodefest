@@ -1,197 +1,124 @@
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
-import { Flame, ShieldAlert, Wind, CloudLightning } from "lucide-react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { userAuthStore } from "../store/authStore";
-import axios from "axios"
-import { TiWeatherCloudy } from "react-icons/ti";
-const SensorData = ({ refetch }) => {
-    const [sensorData, setSensorData] = useState({
-        humidity: 0,
-        moisture: 0,
-        waterLevel: 0,
-        fireAlert: false,
-        securityBreach: false,
-        smokeAlert: false,
-        // weatherAlert: false,
-        // flameAlert: false,
-    });
-    const [humidityint, setHumidityInt] = useState()
-    const [weatherAlert, setweatherAlert] = useState({})
-    const [connectionStatus, setConnectionStatus] = useState('Connecting...');
-    const { deviceLogout } = userAuthStore();
-    console.log("weatherAlert", weatherAlert)
+import axios from "axios";
+import {
+  FireIcon,
+  ShieldExclamationIcon,
+  CloudIcon,
+  CpuChipIcon,
+} from "@heroicons/react/24/solid";
+import { WiHumidity, WiRaindrop, WiThermometer } from "weather-icons-react"; // A good icon library for this
 
-
-        
-    useEffect(() => {
-        const fetchHumidity = async () => {
-            try {
-                const response = await axios.get(
-                    "http://localhost:7180/user/weather"
-                );
-
-                console.log("Full API Response:", response.data);
-                //  const humiditymain = response.data.data.list[0]?.main?.humidity ;
-                //   console.log("humiditymain",humiditymain)
-
-                // Ensure data exists before extracting humidity
-                if (response.data.data?.list?.length > 0) {
-                    const humidity = response.data.data.list[0]?.main?.humidity ?? 80;
-
-                    setHumidityInt(humidity);
-                    const weather = response.data.data.list[0]?.weather[0] ?? 80;
-
-
-                    setweatherAlert(weather)
-                    console.log("Extracted Humidity:", humidity);
-                } else {
-                    console.error("Humidity data not found in response");
-                }
-            } catch (error) {
-                console.error("Error fetching humidity:", error);
-            }
-        };
-
-        fetchHumidity(); // Call the async function
-    }, []);
-
-    // Log the updated state value
-    useEffect(() => {
-        console.log("Updated Humidity State:", humidityint);
-    }, [humidityint]);
-
-
-
-
-
-
-    //end
-    useEffect(() => {
-        const socket = io("http://localhost:7180", {
-            reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-        });
-
-        socket.on("connect", () => {
-            setConnectionStatus('Connected');
-            console.log("Connected to WebSocket");
-        });
-
-        socket.on("disconnect", () => {
-            setConnectionStatus('Disconnected');
-            console.log("Socket Disconnected");
-        });
-
-        socket.on("connect_error", () => {
-            setConnectionStatus('Connection Error');
-            console.log("Connection error");
-        });
-
-        // Listening for sensor data
-        const sensorEvents = {
-            "pir_data": (value) => setSensorData((prev) => ({ ...prev, securityBreach: value })),
-            "soil_moisture_data": (value) => setSensorData((prev) => ({ ...prev, moisture: value })),
-            "water_level_data": (value) => setSensorData((prev) => ({ ...prev, waterLevel: value })),
-            "fire_data": (value) => setSensorData((prev) => ({ ...prev, fireAlert: value })),
-            "gas_data": (value) => setSensorData((prev) => ({ ...prev, smokeAlert: value })),
-            // "weather_alert_data": (value) => setSensorData((prev) => ({ ...prev, weatherAlert: value })),
-            // "flame_data": (value) => setSensorData((prev) => ({ ...prev, flameAlert: value })),
-        };
-
-        Object.keys(sensorEvents).forEach((event) => {
-            socket.on(event, (data) => {
-                console.log(`Received ${event}:`, data);
-                sensorEvents[event](data.value);
-            });
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, []);
+const SensorGauge = ({ value, label, icon: Icon }) => {
+    let color = "#3b82f6"; // Blue
+    if (label === "Moisture") color = "#a5b4fc"; // Indigo
+    if (label === "Humidity") color = "#60a5fa"; // Sky Blue
 
     return (
-        <div className="p-4 bg-white text-gray-900 rounded-lg shadow-lg max-w-xl mx-auto md:max-w-2xl lg:max-w-4xl">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Farm Monitoring</h2>
-                <button
-                    onClick={deviceLogout}
-                    onCLick={() => refetch()}
-                    className="bg-red-700 px-4 py-2 rounded-lg text-white text-sm font-semibold">
-                    Disconnect Device
-                </button>
+        <div className="flex flex-col items-center justify-center text-center">
+            <div className="w-24 h-24 sm:w-28 sm:h-28">
+                <CircularProgressbar
+                    value={value}
+                    text={`${value}%`}
+                    strokeWidth={8}
+                    styles={buildStyles({
+                        textSize: "20px",
+                        pathColor: color,
+                        textColor: "#1e293b", // slate-800
+                        trailColor: "#e2e8f0" // slate-200
+                    })}
+                />
             </div>
-            <p className="mb-4">Status: {connectionStatus}</p>
+             <p className="text-sm font-semibold text-slate-600 mt-2">{label}</p>
+        </div>
+    )
+};
 
-            <div className="grid grid-cols-3 gap-4 p-4 bg-gray-200 rounded-lg p-7">
-                {[
-                    { label: "Water Level", value: ((sensorData.waterLevel / 622) * 100).toFixed(2) },
+const AlertBox = ({ label, active, icon: Icon }) => (
+    <div className={`rounded-lg p-3 text-center transition-colors ${
+        active ? 'bg-red-100 border border-red-300' : 'bg-slate-100'
+    }`}>
+        <Icon className={`h-7 w-7 mx-auto ${active ? 'text-red-600' : 'text-slate-500'}`} />
+        <p className="mt-1 text-xs font-bold">{label}</p>
+        <p className={`text-sm font-semibold ${active ? 'text-red-700' : 'text-slate-600'}`}>
+            {active ? "Alert!" : "Normal"}
+        </p>
+    </div>
+);
 
-                    { label: "Moisture", value: parseFloat((((sensorData.moisture > 3000 ? 0 : sensorData.moisture / 1271.0)) * 100).toFixed(2)) },
 
-                    { label: "Humidity", value: humidityint || 80 }
-                ].map((sensor, index) => (
-                    <div key={index} className="bg-white p-1 rounded-lg text-center shadow relative w-24 h-24 md:w-28 md:h-28">
-                        <CircularProgressbar
-                            value={sensor.value}
-                            text={`${sensor.value}`}
-                            styles={buildStyles({
-                                textSize: "12px",
-                                pathColor: "#3b82f6",
-                                textColor: "#111827",
-                                trailColor: "#e5e7eb"
-                            })}
-                        />
-                        <p className="text-sm text-gray-600 mt-1">{sensor.label}</p>
-                    </div>
-                ))}
-            </div>
+const SensorData = () => {
+    const [sensorData, setSensorData] = useState({ moisture: 0, waterLevel: 0, fireAlert: false, securityBreach: false, smokeAlert: false });
+    const [weather, setWeather] = useState(null);
+    const [connectionStatus, setConnectionStatus] = useState('Connecting...');
+    const { deviceLogout } = userAuthStore();
 
-            <div className="grid grid-cols-4 gap-3 md:gap-15     mt-6 ">
-                {[{
-                    label: "Fire Alert",
-                    active: sensorData.fireAlert,
-                    icon: <Flame className="text-red-600" size={24} />
-                }, {
-                    label: "Security Breach",
-                    active: sensorData.securityBreach,
-                    icon: <ShieldAlert className="text-yellow-600" size={24} />
-                }, {
-                    label: "Smoke Alert",
-                    active: sensorData.smokeAlert,
-                    icon: <Wind className="text-gray-600" size={24} />
-                },
-                    // {
-                    //     label: "Weather Alert",
-                    //     active: sensorData.weatherAlert,
-                    //     icon: <CloudLightning className="text-blue-600" size={24} />
-                    // },
-                    // {
-                    //     label: "Flame Alert",
-                    //     active: sensorData.flameAlert,
-                    //     icon: <Flame className="text-orange-600" size={24} />
-                    // }
-                ].map((sensor, index) => (
-                    <div key={index} className={`p-4 rounded-lg flex flex-col text-center justify-center    ${sensor.active ? 'bg-red-100 border border-red-400' : 'bg-gray-100'}`}>
-                        <p className="flex justify-center">  {sensor.icon} </p>
-                        <p className="text-sm font-semibold mt-2">{sensor.label}</p>
-                        <p className={`text-sm md:text-lg font-bold ${sensor.active ? 'text-red-600' : 'text-gray-600'}`}>
-                            {sensor.active ? "Active" : "Normal"}
-                        </p>
-                    </div>
+    useEffect(() => {
+        const fetchWeather = async () => {
+            try {
+                const response = await axios.get("http://localhost:7180/user/weather");
+                if (response.data.data?.list?.length > 0) {
+                    setWeather(response.data.data.list[0]);
+                }
+            } catch (error) {
+                console.error("Error fetching weather:", error);
+            }
+        };
+        fetchWeather();
+    }, []);
 
-                ))}
-                <div className={"p-4 rounded-lg flex flex-col text-center justify-center bg-gray-100  "}>
-                    <p className="flex justify-center">  <TiWeatherCloudy className="text-blue-600" size={24} /></p>
-                    <p className="text-sm font-semibold mt-2">{weatherAlert.main}   {console.log("weather alreat main ", weatherAlert.main)} </p>
-                    <p className="text-sm md:text-lg font-bold  text-nowrap">
-                        {weatherAlert.description}
+    useEffect(() => {
+        const socket = io("http://localhost:7180", { reconnection: true });
+        socket.on("connect", () => setConnectionStatus('Connected'));
+        socket.on("disconnect", () => setConnectionStatus('Disconnected'));
+        socket.on("connect_error", () => setConnectionStatus('Connection Error'));
+
+        const events = {
+            "pir_data": "securityBreach", "soil_moisture_data": "moisture",
+            "water_level_data": "waterLevel", "fire_data": "fireAlert", "gas_data": "smokeAlert"
+        };
+
+        for (const [event, key] of Object.entries(events)) {
+            socket.on(event, (data) => setSensorData(prev => ({ ...prev, [key]: data.value })));
+        }
+        return () => socket.disconnect();
+    }, []);
+
+    const moistureValue = parseFloat((((sensorData.moisture > 3000 ? 0 : sensorData.moisture / 1271.0)) * 100).toFixed(2));
+    const waterLevelValue = parseFloat(((sensorData.waterLevel / 622) * 100).toFixed(2));
+    const humidityValue = weather?.main?.humidity || 0;
+
+    return (
+        <div className="rounded-xl bg-white p-6 shadow-lg">
+            <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+                <div>
+                     <p className={`flex items-center gap-2 text-sm font-semibold ${connectionStatus === 'Connected' ? 'text-green-600' : 'text-amber-600'}`}>
+                        <span className={`h-2 w-2 rounded-full ${connectionStatus === 'Connected' ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`}></span>
+                        Device {connectionStatus}
                     </p>
                 </div>
+                <button
+                    onClick={deviceLogout}
+                    className="w-full sm:w-auto rounded-lg bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-300"
+                >
+                    Disconnect
+                </button>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-6 border-t border-slate-200 pt-6 sm:grid-cols-3">
+                <SensorGauge value={waterLevelValue} label="Water Level" />
+                <SensorGauge value={moistureValue} label="Soil Moisture" />
+                <SensorGauge value={humidityValue} label="Air Humidity" />
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-4 border-t border-slate-200 pt-6 md:grid-cols-4">
+                <AlertBox label="Fire Alert" active={sensorData.fireAlert} icon={FireIcon} />
+                <AlertBox label="Security" active={sensorData.securityBreach} icon={ShieldExclamationIcon} />
+                <AlertBox label="Smoke" active={sensorData.smokeAlert} icon={CloudIcon} />
+                <AlertBox label="Weather" active={false} icon={CpuChipIcon} /> 
             </div>
         </div>
     );
