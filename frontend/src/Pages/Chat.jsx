@@ -89,17 +89,17 @@ const Chat = () => {
             <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-white bg-green-500"></span>
           </div>
           <div>
-            <h1 className="font-bold text-slate-800">sarakKrishi Assistant</h1>
+            <h1 className="font-bold text-slate-800">saralKrishi Assistant</h1>
             <p className="text-sm text-green-600">Online</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100">
+          {/* <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100">
             <PhoneIcon className="h-6 w-6" />
           </button>
           <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100">
             <VideoCameraIcon className="h-6 w-6" />
-          </button>
+          </button> */}
           <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100">
             <EllipsisVerticalIcon className="h-6 w-6" />
           </button>

@@ -1,4 +1,12 @@
 {
+  "footer": {
+    "tagline": "Your modern solution for smart and efficient farming.",
+    "quickLinks": "Quick Links",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "rights": "All rights reserved."
+  },
   "navigation": {
     "marketplace": "Marketplace",
     "community": "Community",
@@ -6,6 +14,71 @@
     "aiHelper": "AI Helper",
     "home": "Home",
     "profile": "Profile",
-    "market": "Market"
+    "market": "Market",
+    "news": "News"
+  },
+"home": {
+  "greeting": {
+    "morning": "Good Morning",
+    "afternoon": "Good Afternoon",
+    "evening": "Good Evening"
+  },
+  "farmer": "Farmer",
+  "outlook": "Here's your farm's outlook for today.",
+  "loading": "Loading...",
+  "connect": {
+    "title": "Connect Your Farm",
+    "desc": "Get live sensor data by connecting your device."
+  },
+  "liveStatus": "Live Farm Status",
+  "quickActions": {
+    "disease": "Identify Disease",
+    "diseaseSub": "Scan plants with your camera",
+    "marketSub": "Buy & sell produce",
+    "communitySub": "Connect with other farmers"
+  },
+  "wisdom": {
+    "title": "Farming Wisdom from the Pros",
+    "desc": "Get in touch with top farmers earning 12+ lakhs per season and learn their secrets!",
+    "button": "Go to Community"
   }
+},
+"connect": {
+  "button": "Connect Device Now",
+  "title": "Connect Your Device",
+  "desc": "Enter your device number and code to connect your farm device and start receiving live data.",
+  "deviceNoLabel": "Device Number",
+  "deviceNoPlaceholder": "e.g. 123456",
+  "deviceCodeLabel": "Device Code",
+  "deviceCodePlaceholder": "e.g. ABCD1234",
+  "connect": "Connect",
+  "connecting": "Connecting...",
+  "cancel": "Cancel",
+  "loginRequired": "You must be logged in to connect a device.",
+  "success": "Device connected successfully!",
+  "failed": "Device login failed"
+},
+"news": {
+  "latest": "Latest News",
+  "add": "Add News",
+  "readMore": "Read More",
+  "readLess": "Read Less"
+},
+"sensor": {
+  "device": "Device",
+  "connecting": "Connecting...",
+  "connected": "Connected",
+  "disconnected": "Disconnected",
+  "connectionerror": "Connection Error",
+  "disconnect": "Disconnect",
+  "waterLevel": "Water Level",
+  "soilMoisture": "Soil Moisture",
+  "airHumidity": "Air Humidity",
+  "fireAlert": "Fire Alert",
+  "security": "Security",
+  "smoke": "Smoke",
+  "weather": "Weather",
+  "alert": "Alert!",
+  "normal": "Normal"
+}
 }

@@ -37,6 +37,7 @@ import { useState } from "react";
 import TransactionHistory from "./Subpages/Transaction/TransactionHistory";
 import PlantIdentifier from "./Subpages/PlantIdentifier/PlantIdentifier";
 import DiseaseIdentifier from "./Subpages/DiseaseIdentifier/DiseaseIdentifier";
+import Footer from "./components/Footer";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -133,6 +134,9 @@ const App = () => {
       <Toaster />
       <div className="flex md:flex md:mb-[70px] sticky mt-12   z-50 bg-white shadow-md md:hidden"> <BottomNavigation />
       </div>
+      <div className="hidden md:block">
+                <Footer />
+            </div>
 
     </div>
   );

@@ -6,47 +6,48 @@ import {
 } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { userAuthStore } from "../store/authStore";
 import Connectdevice from "../Subpages/Connectdevice";
 import News from "../Subpages/News";
 import SensorData from "../Subpages/SensorData";
 
-// Helper to get a greeting based on the time of day
-const getGreeting = () => {
+const getGreeting = (t) => {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good Morning";
-  if (hour < 18) return "Good Afternoon";
-  return "Good Evening";
+  if (hour < 12) return t("home.greeting.morning");
+  if (hour < 18) return t("home.greeting.afternoon");
+  return t("home.greeting.evening");
 };
 
-// Prompt for connecting a device
-const ConnectDevicePromptComponent = ({ refetch }) => (
-  <div className="rounded-xl bg-white p-6 text-center shadow-lg">
-    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="h-6 w-6 text-green-700"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.136 12.006a8.25 8.25 0 0 1 13.728 0M2.01 8.94a11.25 11.25 0 0 1 19.98 0M12 21.75a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H12a.75.75 0 0 1-.75-.75v-.008Z"
-        />
-      </svg>
+const ConnectDevicePromptComponent = ({ refetch }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="rounded-xl bg-white p-6 text-center shadow-lg">
+      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="h-6 w-6 text-green-700"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.136 12.006a8.25 8.25 0 0 1 13.728 0M2.01 8.94a11.25 11.25 0 0 1 19.98 0M12 21.75a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H12a.75.75 0 0 1-.75-.75v-.008Z"
+          />
+        </svg>
+      </div>
+      <h3 className="mt-4 text-xl font-bold text-slate-800">{t("home.connect.title")}</h3>
+      <p className="mb-2 text-slate-500">
+        {t("home.connect.desc")}
+      </p>
+      <Connectdevice refetch={refetch} className="mt-4" />
     </div>
-    <h3 className="mt-4 text-xl font-bold text-slate-800">Connect Your Farm</h3>
-    <p className="mb-2 text-slate-500">
-      Get live sensor data by connecting your device.
-    </p>
-    <Connectdevice refetch={refetch} className="mt-4" />
-  </div>
-);
+  );
+};
 
-// Reusable card for quick actions
 const QuickActionCard = ({ to, icon: Icon, title, subtitle }) => (
   <Link
     to={to}
@@ -68,6 +69,7 @@ const QuickActionCard = ({ to, icon: Icon, title, subtitle }) => (
 
 // The main Home component
 const Home = () => {
+  const { t } = useTranslation();
   const { user } = userAuthStore();
   const [weather, setWeather] = useState(null);
   const [isDeviceConnected, setIsDeviceConnected] = useState(false);
@@ -98,14 +100,14 @@ const Home = () => {
         {/* --- Greeting & Weather Card --- */}
         <div className="rounded-xl bg-gradient-to-br from-green-500 to-green-700 p-6 text-white shadow-lg md:p-8">
           <h1 className="text-3xl font-bold lg:text-4xl">
-            {getGreeting()}, {user?.username || "Farmer"}!
+            {getGreeting(t)}, {user?.username || t("home.farmer")}!
           </h1>
-          <p className="opacity-90">Here's your farm's outlook for today.</p>
+          <p className="opacity-90">{t("home.outlook")}</p>
           <div className="mt-6 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
             {/* Weather Info */}
             <div>
               <p className="text-sm font-semibold uppercase tracking-wider opacity-80">
-                {weather ? weather.city.name : "Loading..."}
+                {weather ? weather.city.name : t("home.loading")}
               </p>
               <p className="text-5xl font-extrabold lg:text-6xl">
                 {weather ? `${Math.round(weather.list[0].main.temp)}°C` : "..."}
@@ -138,7 +140,7 @@ const Home = () => {
         {/* --- Live Farm Status --- */}
         <section>
           <h2 className="text-2xl font-bold text-slate-800 lg:text-3xl">
-            Live Farm Status
+            {t("home.liveStatus")}
           </h2>
           <div className="mt-4">
             {isDeviceConnected ? (
@@ -154,20 +156,20 @@ const Home = () => {
           <QuickActionCard
             to="/service/diseaseidentifier"
             icon={ShieldExclamationIcon}
-            title="Identify Disease"
-            subtitle="Scan plants with your camera"
+            title={t("home.quickActions.disease")}
+            subtitle={t("home.quickActions.diseaseSub")}
           />
           <QuickActionCard
             to="/marketplace"
             icon={BuildingStorefrontIcon}
-            title="Marketplace"
-            subtitle="Buy & sell produce"
+            title={t("navigation.marketplace")}
+            subtitle={t("home.quickActions.marketSub")}
           />
           <QuickActionCard
             to="/community"
             icon={UsersIcon}
-            title="Community"
-            subtitle="Connect with other farmers"
+            title={t("navigation.community")}
+            subtitle={t("home.quickActions.communitySub")}
           />
         </div>
 
@@ -176,18 +178,17 @@ const Home = () => {
           <div className="flex flex-col justify-center p-8 md:w-2/3 md:p-12">
             <div>
               <h3 className="text-3xl font-bold md:text-4xl lg:text-5xl">
-                Farming Wisdom from the Pros
+                {t("home.wisdom.title")}
               </h3>
               <p className="mt-4 max-w-lg opacity-90">
-                Get in touch with top farmers earning 12+ lakhs per season and
-                learn their secrets!
+                {t("home.wisdom.desc")}
               </p>
             </div>
             <Link
               to="/community"
               className="mt-6 inline-block w-full rounded-lg bg-white px-5 py-3 text-center font-semibold text-slate-800 transition hover:bg-slate-200 sm:w-auto"
             >
-              Go to Community
+              {t("home.wisdom.button")}
             </Link>
           </div>
           <div className="relative h-48 md:h-auto md:w-1/3">

@@ -10,12 +10,14 @@ import {
   CloudIcon,
   CpuChipIcon,
 } from "@heroicons/react/24/solid";
-import { WiHumidity, WiRaindrop, WiThermometer } from "weather-icons-react"; // A good icon library for this
+import { useTranslation } from "react-i18next";
+import { WiHumidity, WiRaindrop, WiThermometer } from "weather-icons-react";
 
 const SensorGauge = ({ value, label, icon: Icon }) => {
+    const { t } = useTranslation();
     let color = "#3b82f6"; // Blue
-    if (label === "Moisture") color = "#a5b4fc"; // Indigo
-    if (label === "Humidity") color = "#60a5fa"; 
+    if (label === t("sensor.soilMoisture")) color = "#a5b4fc"; // Indigo
+    if (label === t("sensor.airHumidity")) color = "#60a5fa";
 
     return (
         <div className="flex flex-col items-center justify-center text-center">
@@ -27,30 +29,34 @@ const SensorGauge = ({ value, label, icon: Icon }) => {
                     styles={buildStyles({
                         textSize: "20px",
                         pathColor: color,
-                        textColor: "#1e293b", // slate-800
-                        trailColor: "#e2e8f0" // slate-200
+                        textColor: "#1e293b",
+                        trailColor: "#e2e8f0"
                     })}
                 />
             </div>
-             <p className="text-sm font-semibold text-slate-600 mt-2">{label}</p>
+            <p className="text-sm font-semibold text-slate-600 mt-2">{label}</p>
         </div>
-    )
+    );
 };
 
-const AlertBox = ({ label, active, icon: Icon }) => (
-    <div className={`rounded-lg p-3 text-center transition-colors ${
-        active ? 'bg-red-100 border border-red-300' : 'bg-slate-100'
-    }`}>
-        <Icon className={`h-7 w-7 mx-auto ${active ? 'text-red-600' : 'text-slate-500'}`} />
-        <p className="mt-1 text-xs font-bold">{label}</p>
-        <p className={`text-sm font-semibold ${active ? 'text-red-700' : 'text-slate-600'}`}>
-            {active ? "Alert!" : "Normal"}
-        </p>
-    </div>
-);
+const AlertBox = ({ label, active, icon: Icon }) => {
+    const { t } = useTranslation();
+    return (
+        <div className={`rounded-lg p-3 text-center transition-colors ${
+            active ? 'bg-red-100 border border-red-300' : 'bg-slate-100'
+        }`}>
+            <Icon className={`h-7 w-7 mx-auto ${active ? 'text-red-600' : 'text-slate-500'}`} />
+            <p className="mt-1 text-xs font-bold">{label}</p>
+            <p className={`text-sm font-semibold ${active ? 'text-red-700' : 'text-slate-600'}`}>
+                {active ? t("sensor.alert") : t("sensor.normal")}
+            </p>
+        </div>
+    );
+};
 
 
 const SensorData = ({ onDisconnect }) => {
+    const { t } = useTranslation();
     const [sensorData, setSensorData] = useState({ moisture: 0, waterLevel: 0, fireAlert: false, securityBreach: false, smokeAlert: false });
     const [weather, setWeather] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('Connecting...');
@@ -103,34 +109,39 @@ const SensorData = ({ onDisconnect }) => {
     const waterLevelValue = parseFloat(((sensorData.waterLevel / 622) * 100).toFixed(2));
     const humidityValue = weather?.main?.humidity || 0;
 
+    // Translated labels
+    const waterLevelLabel = t("sensor.waterLevel", "Water Level");
+    const soilMoistureLabel = t("sensor.soilMoisture", "Soil Moisture");
+    const airHumidityLabel = t("sensor.airHumidity", "Air Humidity");
+
     return (
         <div className="rounded-xl bg-white p-6 shadow-lg">
             <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
                 <div>
                      <p className={`flex items-center gap-2 text-sm font-semibold ${connectionStatus === 'Connected' ? 'text-green-600' : 'text-amber-600'}`}>
                         <span className={`h-2 w-2 rounded-full ${connectionStatus === 'Connected' ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`}></span>
-                        Device {connectionStatus}
+                        {t("sensor.device")} {t(`sensor.${connectionStatus.toLowerCase().replace(/ /g, "")}`, connectionStatus)}
                     </p>
                 </div>
                 <button
                     onClick={handleDisconnect}
                     className="w-full sm:w-auto rounded-lg bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-300"
                 >
-                    Disconnect
+                    {t("sensor.disconnect", "Disconnect")}
                 </button>
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 border-t border-slate-200 pt-6 sm:grid-cols-3">
-                <SensorGauge value={waterLevelValue} label="Water Level" />
-                <SensorGauge value={moistureValue} label="Soil Moisture" />
-                <SensorGauge value={humidityValue} label="Air Humidity" />
+                <SensorGauge value={waterLevelValue} label={waterLevelLabel} />
+                <SensorGauge value={moistureValue} label={soilMoistureLabel} />
+                <SensorGauge value={humidityValue} label={airHumidityLabel} />
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-4 border-t border-slate-200 pt-6 md:grid-cols-4">
-                <AlertBox label="Fire Alert" active={sensorData.fireAlert} icon={FireIcon} />
-                <AlertBox label="Security" active={sensorData.securityBreach} icon={ShieldExclamationIcon} />
-                <AlertBox label="Smoke" active={sensorData.smokeAlert} icon={CloudIcon} />
-                <AlertBox label="Weather" active={false} icon={CpuChipIcon} /> 
+                <AlertBox label={t("sensor.fireAlert", "Fire Alert")} active={sensorData.fireAlert} icon={FireIcon} />
+                <AlertBox label={t("sensor.security", "Security")} active={sensorData.securityBreach} icon={ShieldExclamationIcon} />
+                <AlertBox label={t("sensor.smoke", "Smoke")} active={sensorData.smokeAlert} icon={CloudIcon} />
+                <AlertBox label={t("sensor.weather", "Weather")} active={false} icon={CpuChipIcon} /> 
             </div>
         </div>
     );
