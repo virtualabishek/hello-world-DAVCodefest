@@ -99,5 +99,43 @@
   "comingSoon": "This section is coming soon.",
   "loadMore": "Load More Posts",
   "createPost": "Create a new post"
+}, 
+"profile": {
+  "loading": "Loading profile...",
+  "myProfile": "My Profile",
+  "messages": "Messages",
+  "avatarAlt": "Profile",
+  "verified": "Verified",
+  "verifyNow": "Verify Now",
+  "editProfile": "Edit Profile",
+  "settingsSupport": "Settings & Support",
+  "about": "About",
+  "reportProblem": "Report a Problem",
+  "logout": "Log Out"
+},
+"login": {
+  "title": "Login",
+  "email": "Email",
+  "password": "Password",
+  "loginButton": "Log In",
+  "forgotPassword": "Forgot Password?",
+  "noAccount": "Don't have an account?",
+  "signup": "Sign Up",
+  "error": "Invalid email or password."
+},
+"services": {
+  "title": "Your Services",
+  "farmMonitor": "Farm Monitor",
+  "friendsChat": "Friends Chat",
+  "expertChat": "Expert Chat",
+  "aiHelper": "AI Helper",
+  "plantId": "Plant ID",
+  "diseaseId": "Disease ID",
+  "liveSensor": "Live Sensor",
+  "loanForm": "Loan Form",
+  "subsidyInfo": "Subsidy Info",
+  "deviceSetup": "Device Setup",
+  "myPurchases": "My Purchases",
+  "newsFeed": "News Feed"
 }
 }

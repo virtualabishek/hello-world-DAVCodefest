@@ -118,5 +118,45 @@
   "comingSoon": "यो खण्ड चाँडै आउँदैछ।",
   "loadMore": "थप पोस्टहरू हेर्नुहोस्",
   "createPost": "नयाँ पोस्ट सिर्जना गर्नुहोस्"
+},
+"profile": {
+  "loading": "प्रोफाइल लोड हुँदैछ...",
+  "myProfile": "मेरो प्रोफाइल",
+  "messages": "सन्देशहरू",
+  "avatarAlt": "प्रोफाइल",
+  "verified": "प्रमाणित",
+  "verifyNow": "अहिले प्रमाणित गर्नुहोस्",
+  "editProfile": "प्रोफाइल सम्पादन गर्नुहोस्",
+  "settingsSupport": "सेटिङ्स र सहायता",
+  "about": "बारेमा",
+  "reportProblem": "समस्या रिपोर्ट गर्नुहोस्",
+  "logout": "लगआउट"
+},
+"login": {
+  "title": "लगइन",
+  "email": "इमेल",
+  "password": "पासवर्ड",
+  "loginButton": "लगइन गर्नुहोस्",
+  "forgotPassword": "पासवर्ड बिर्सनुभयो?",
+  "noAccount": "खाता छैन?",
+  "signup": "साइन अप गर्नुहोस्",
+  "error": "इमेल वा पासवर्ड गलत छ।"
+},
+"services": {
+  "title": "तपाईंका सेवाहरू",
+  "farmMonitor": "फार्म मोनिटर",
+  "friendsChat": "साथीसँग च्याट",
+  "expertChat": "विशेषज्ञसँग च्याट",
+  "aiHelper": "एआई सहायक",
+  "plantId": "बिरुवा पहिचान",
+  "diseaseId": "रोग पहिचान",
+  "liveSensor": "प्रत्यक्ष सेन्सर",
+  "loanForm": "ऋण फारम",
+  "subsidyInfo": "अनुदान जानकारी",
+  "deviceSetup": "डिभाइस सेटअप",
+  "myPurchases": "मेरो खरिदहरू",
+  "newsFeed": "समाचार"
 }
+
+
 }
