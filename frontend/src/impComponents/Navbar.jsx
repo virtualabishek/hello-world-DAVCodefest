@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { userAuthStore } from "../store/authStore";
 import {
   BuildingStorefrontIcon,
@@ -9,6 +10,7 @@ import {
 
 const BottomNavigation = () => {
   const { user } = userAuthStore();
+  const { t } = useTranslation();
 
   const navLinkClasses = ({ isActive }) =>
     `flex flex-col items-center justify-center gap-1 w-full transition-colors duration-200 ${
@@ -20,22 +22,22 @@ const BottomNavigation = () => {
       <nav className="mx-auto flex h-16 max-w-md items-center justify-around">
         <NavLink to="/chat" className={navLinkClasses}>
           <ChatBubbleOvalLeftEllipsisIcon className="h-6 w-6" />
-          <span className="text-xs font-medium">Chat</span>
+          <span className="text-xs font-medium">{t('navigation.chat')}</span>
         </NavLink>
 
         <NavLink to="/community" className={navLinkClasses}>
           <UsersIcon className="h-6 w-6" />
-          <span className="text-xs font-medium">Community</span>
+          <span className="text-xs font-medium">{t('navigation.community')}</span>
         </NavLink>
 
         <NavLink to="/" className={navLinkClasses}>
           <HomeIcon className="h-6 w-6" />
-          <span className="text-xs font-medium">Home</span>
+          <span className="text-xs font-medium">{t('navigation.home')}</span>
         </NavLink>
 
         <NavLink to="/marketplace" className={navLinkClasses}>
           <BuildingStorefrontIcon className="h-6 w-6" />
-          <span className="text-xs font-medium">Market</span>
+          <span className="text-xs font-medium">{t('navigation.market')}</span>
         </NavLink>
 
         <NavLink to="/profile" className={navLinkClasses}>
@@ -48,7 +50,7 @@ const BottomNavigation = () => {
               })`,
             }}
           />
-          <span className="text-xs font-medium">Profile</span>
+          <span className="text-xs font-medium">{t('navigation.profile')}</span>
         </NavLink>
       </nav>
     </footer>

@@ -1,0 +1,11 @@
+{
+  "navigation": {
+    "marketplace": "Marketplace",
+    "community": "Community",
+    "chat": "Chat",
+    "aiHelper": "AI Helper",
+    "home": "Home",
+    "profile": "Profile",
+    "market": "Market"
+  }
+}

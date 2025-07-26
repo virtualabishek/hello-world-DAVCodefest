@@ -112,44 +112,25 @@ const App = () => {
         <Route path="/news/:id" element={<SingleNews />} />
 
 
-
         <Route path="/profile/:profileID" element={<ProfileUserId />} />
-
         <Route path="/post/:userId" element={<Postform />} />
         <Route path="/sensordata" element={<SensorData />} />
-
         <Route path="/notification/:userId" element={<Notification setTriggerNotificationFetch={setTriggerNotificationFetch} />} />
         <Route path="/newspost/:userId" element={<RedirectunadminUser><NewsPostForm /> </RedirectunadminUser>} />
         <Route path="/addproduct" element={<AddProductForm />} />
-
         {/* <Route */}
         <Route path="/marketplace/:id" element={<ProductDetail />} />
-
         <Route path="/payment-form/success" element={<Success />} />
         <Route path="/payment-form/failure" element={<Failure />} />
-
         <Route path="/chatting" element={<Chatting />} />
         <Route path="/devicesetting/:deviceId" element={<DeviceSetting />} />
         <Route path="/community/singlePage/:pageId" element={<SinglePage />} />
-
         <Route path="/transaction/history" element={<TransactionHistory />} />
         {/* transaction history remainig */}
         <Route path="/service/plantidentifier" element={<PlantIdentifier />} />
-
-
         <Route path="/service/diseaseidentifier" element={<DiseaseIdentifier />} />
-
-
-
-
-
-
-
-
       </Routes>
       <Toaster />
-
-
       <div className="flex md:flex md:mb-[70px] sticky mt-12   z-50 bg-white shadow-md md:hidden"> <BottomNavigation />
       </div>
 

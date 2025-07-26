@@ -17,7 +17,6 @@ export const handleAIRequest = async (req, res) => {
     });
 
     console.log("✅ Image uploaded to Cloudinary:", uploadRes.secure_url);
-
     // ✅ Prepare request payload for Crop Health API
     const requestBody = {
       images: [uploadRes.secure_url], // ✅ Use Cloudinary URL instead of Base64
@@ -25,7 +24,6 @@ export const handleAIRequest = async (req, res) => {
       longitude: 16.608,
       similar_images: true,
     };
-
     // ✅ Send request to Kindwise API
     const apiResponse = await axios.post(
       `${process.env.KINDWISE_API_URL}/identification`,
@@ -38,10 +36,6 @@ export const handleAIRequest = async (req, res) => {
       }
     );
     console.log("✅ Kindwise API response:", apiResponse.data);
-    // ✅ Delete the uploaded file from local storage after upload
-    // fs.unlinkSync(imagePath);
-
-    // ✅ Return response from Kindwise API to client
     return res.status(200).json(apiResponse.data);
   } catch (error) {
     console.error("❌ Error:", error.message);
@@ -51,14 +45,11 @@ export const handleAIRequest = async (req, res) => {
     });
   }
 };
-
 export const handleTexttoText = async (req, res) => {
   console.log(req.body);
   const { input } = req.body;
-
   try {
     const client = new HfInference(`${process.env.HFTEXT2TEXT}`);
-
     const chatCompletions = await client.chatCompletion({
       model: "deepseek-ai/DeepSeek-R1",
       messages: [
@@ -72,17 +63,14 @@ export const handleTexttoText = async (req, res) => {
       provider: "together",
       max_tokens: 500,
     });
-
     console.log(
       "chatCompletion.choices[0].message",
       chatCompletions.choices[0].message
     );
     console.log("chatCompletion.choices[0]", chatCompletions.choices[0]);
-
     const { thinkContent, responseContent } = extractSections(
       chatCompletions.choices[0].message.content
     );
-
     console.log(responseContent);
     res.status(200).json({ chatCompletion: responseContent });
   } catch (error) {
@@ -90,17 +78,13 @@ export const handleTexttoText = async (req, res) => {
     res.status(400).json({ message: error });
   }
 };
-
 export const handleText = async (req, res) => {
   const { input } = req.body;
-
   if (!input) {
     return res.status(400).json({ error: "Input text is required." });
   }
-
   try {
     const client = new HfInference(process.env.HFTEXT2TEXT);
-
     const chatCompletions = await client.chatCompletion({
       model: "deepseek-ai/DeepSeek-R1",
       messages: [
@@ -114,12 +98,9 @@ export const handleText = async (req, res) => {
       provider: "together",
       max_tokens: 500,
     });
-
-    // Use extractSections to remove <think> section
     const { responseContent } = extractSections(
       chatCompletions.choices[0].message.content
     );
-
     res.status(200).json({ chatCompletion: responseContent });
   } catch (error) {
     console.error("Error in handleText controller:", error);
