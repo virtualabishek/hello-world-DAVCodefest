@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -15,7 +15,7 @@ import { WiHumidity, WiRaindrop, WiThermometer } from "weather-icons-react"; // 
 const SensorGauge = ({ value, label, icon: Icon }) => {
     let color = "#3b82f6"; // Blue
     if (label === "Moisture") color = "#a5b4fc"; // Indigo
-    if (label === "Humidity") color = "#60a5fa"; // Sky Blue
+    if (label === "Humidity") color = "#60a5fa"; 
 
     return (
         <div className="flex flex-col items-center justify-center text-center">
@@ -50,11 +50,12 @@ const AlertBox = ({ label, active, icon: Icon }) => (
 );
 
 
-const SensorData = () => {
+const SensorData = ({ onDisconnect }) => {
     const [sensorData, setSensorData] = useState({ moisture: 0, waterLevel: 0, fireAlert: false, securityBreach: false, smokeAlert: false });
     const [weather, setWeather] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('Connecting...');
     const { deviceLogout } = userAuthStore();
+    const socketRef = useRef(null); 
 
     useEffect(() => {
         const fetchWeather = async () => {
@@ -72,6 +73,8 @@ const SensorData = () => {
 
     useEffect(() => {
         const socket = io("http://localhost:7180", { reconnection: true });
+        socketRef.current = socket; 
+
         socket.on("connect", () => setConnectionStatus('Connected'));
         socket.on("disconnect", () => setConnectionStatus('Disconnected'));
         socket.on("connect_error", () => setConnectionStatus('Connection Error'));
@@ -87,6 +90,15 @@ const SensorData = () => {
         return () => socket.disconnect();
     }, []);
 
+    const handleDisconnect = () => {
+        if (socketRef.current) {
+            socketRef.current.disconnect();
+            setConnectionStatus('Disconnected');
+        }
+        deviceLogout();
+        if (onDisconnect) onDisconnect(); 
+    };
+
     const moistureValue = parseFloat((((sensorData.moisture > 3000 ? 0 : sensorData.moisture / 1271.0)) * 100).toFixed(2));
     const waterLevelValue = parseFloat(((sensorData.waterLevel / 622) * 100).toFixed(2));
     const humidityValue = weather?.main?.humidity || 0;
@@ -101,7 +113,7 @@ const SensorData = () => {
                     </p>
                 </div>
                 <button
-                    onClick={deviceLogout}
+                    onClick={handleDisconnect}
                     className="w-full sm:w-auto rounded-lg bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-300"
                 >
                     Disconnect

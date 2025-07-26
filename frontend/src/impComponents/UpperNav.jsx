@@ -11,8 +11,8 @@ const UpperNavigation = ({ unreadNotifications }) => {
   const { user } = userAuthStore();
 
   return (
-    <header className="fixed top-0 left-0 z-40 w-full items-center border-b border-slate-200 bg-white/90 backdrop-blur-lg">
-      <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="fixed top-0 left-0 z-40 w-full  items-center border-b border-slate-200 bg-white/90 backdrop-blur-lg">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4  sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           <Link to="/" aria-label="Home">
             <img src="/images/logo.png" alt="Logo" className="h-12 w-12" />

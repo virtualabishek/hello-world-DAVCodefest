@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { userAuthStore } from "../store/authStore";
 import SensorData from "../Subpages/SensorData";
-import Connectdevice from "../Subpages/Connectdevice";
 import News from "../Subpages/News";
+import Connectdevice from "../Subpages/Connectdevice";
 import {
   ShieldExclamationIcon,
   BuildingStorefrontIcon,
@@ -18,15 +18,15 @@ const getGreeting = () => {
   return "Good Evening";
 };
 
-const ConnectDevicePrompt = ({ refetch }) => (
-  <div className="rounded-xl bg-white p-6 text-center shadow-lg">
+const ConnectDevicePromptComponent = ({ refetch }) => (
+  <div className="rounded-xl bg-white p-6 text-center shadow-lg ">
     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6 text-green-700">
         <path strokeLinecap="round" strokeLinejoin="round" d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.136 12.006a8.25 8.25 0 0 1 13.728 0M2.01 8.94a11.25 11.25 0 0 1 19.98 0M12 21.75a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H12a.75.75 0 0 1-.75-.75v-.008Z" />
       </svg>
     </div>
     <h3 className="mt-4 text-xl font-bold text-slate-800">Connect Your Farm</h3>
-    <p className="mt-1 text-slate-500">Get live sensor data by connecting your device.</p>
+    <p className="mb-2 text-slate-500">Get live sensor data by connecting your device.</p>
     <Connectdevice refetch={refetch} className="mt-4" />
   </div>
 );
@@ -48,6 +48,8 @@ const QuickActionCard = ({ to, icon: Icon, title, subtitle }) => (
 const Home = () => {
   const { user } = userAuthStore();
   const [weather, setWeather] = useState(null);
+  const [deviceRefresh, setDeviceRefresh] = useState(false); 
+  const [isDeviceConnected, setIsDeviceConnected] = useState(false);
 
   const refetch = () => {
     fetch("https://api.openweathermap.org/data/2.5/forecast?q=Lalitpur&units=metric&appid=5e0c4d7564f485afbd09ea6e9b55adb4")
@@ -60,11 +62,23 @@ const Home = () => {
     refetch();
   }, []);
 
+  useEffect(() => {
+    setIsDeviceConnected(!!user?.devices && user.devices.length > 0);
+  }, [user]);
+
+  const handleDeviceConnect = () => {
+    setIsDeviceConnected(true);
+  };
+
+  const handleDeviceDisconnect = () => {
+    setIsDeviceConnected(false);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 m-20">
       <main className="container mx-auto space-y-8 p-4 py-8 pb-24">
         <div className="rounded-xl bg-gradient-to-br from-green-500 to-green-700 p-6 text-white shadow-lg">
-            <h1 className="text-3xl font-bold">{getGreeting()}, {user?.name || "Farmer"}!</h1>
+            <h1 className="text-3xl font-bold">{getGreeting()}, {user?.username || "Farmer"}!</h1>
             <p className="opacity-90">Here's your farm's outlook for today.</p>
             <div className="mt-6 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -87,7 +101,9 @@ const Home = () => {
         <div>
             <h2 className="text-2xl font-bold text-slate-800">Live Farm Status</h2>
             <div className="mt-4">
-                {user?.devices ? <SensorData /> : <ConnectDevicePrompt refetch={refetch} />}
+                {isDeviceConnected
+                  ? <SensorData onDisconnect={handleDeviceDisconnect} />
+                  : <ConnectDevicePromptComponent refetch={refetch} />}
             </div>
         </div>
         
@@ -98,14 +114,23 @@ const Home = () => {
         </div>
 
         <div className="relative flex flex-col md:flex-row overflow-hidden rounded-xl bg-gradient-to-r from-slate-700 to-slate-900 text-white shadow-lg">
-            <div className="p-8 md:w-2/3">
-                <h3 className="text-2xl font-bold">Farming Wisdom from the Pros</h3>
-                <p className="mt-2 max-w-lg opacity-90">
+            <div className="p-8 h-[400px] flex flex-col justify-between md:w-2/3">
+            <div className="flex flex-col">
+
+                <h3 className="text-5xl font-bold">Farming Wisdom from the Pros</h3>
+                <p className="mt-5 max-w-lg opacity-90">
                     Get in touch with top farmers earning 12+ lakhs per season and learn their secrets!
                 </p>
+            </div>
+                <div className="flex w-full h-15 ">
+
                 <Link to="/community" className="mt-4 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-200">
-                    Contact Now
+                    Go to Community
                 </Link>
+                {/* <Link to="/marketplace" className="mt-4 inline-block rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-200">
+                    Go to Marketplace
+                </Link> */}
+                </div>
             </div>
             <div className="relative h-40 md:h-auto md:w-1/3">
                 <img
@@ -117,7 +142,7 @@ const Home = () => {
         </div>
 
         <div>
-            <h2 className="text-2xl font-bold text-slate-800">Latest News</h2>
+            {/* <h2 className="text-2xl font-bold text-slate-800">Latest News</h2> */}
             <div className="mt-4">
                 <News />
             </div>
