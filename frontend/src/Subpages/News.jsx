@@ -102,22 +102,31 @@ const News = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 py-8">
-      <div className="container mx-auto max-w-5xl px-4">
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center w-full justify-between gap-3">
+        
+
+            <div className="flex flex-row">
             <NewspaperIcon className="h-8 w-8 text-green-600" />
             <h1 className="text-3xl font-bold text-slate-800">Latest News</h1>
+            </div>
+
           </div>
+      <div className="container mx-auto max-w-5xl px-4">
+        <header className="flex items-center justify-between">
           {user?.role === "admin" && (
             <Link
-              to="/news/create"
-              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-green-700"
+            to="/news/create"
+            className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-green-700"
             >
               <PlusIcon className="h-5 w-5" />
               <span>Add News</span>
             </Link>
           )}
         </header>
+
+          
+        
+        
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
           {isLoading ? (
