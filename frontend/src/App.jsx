@@ -20,7 +20,7 @@ import ProfileUserId from "./Subpages/ProfileUserId";
 import FriendList from "./Subpages/Friendlist";
 import SocketIO from "./Pages/Socketio";
 import News from "./Subpages/News";
-import SingleNews from "./Subpages/NewsDetail";
+import SingleNews from "./Subpages/SingleNews";
 import MarketPlace from "./Pages/MarketPlace";
 import SensorData from "./Subpages/SensorData";
 import Notification from "./Subpages/Notification";

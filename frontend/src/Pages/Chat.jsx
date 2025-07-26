@@ -1,168 +1,157 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { userAuthStore } from "../store/authStore";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { IoCall } from "react-icons/io5";
-import remarkGfm from "remark-gfm"; 
-import { MdVideoCall } from "react-icons/md";
-import { CiCircleMore } from "react-icons/ci";
+import remarkGfm from "remark-gfm";
+import TextareaAutosize from 'react-textarea-autosize';
+import { userAuthStore } from "../store/authStore";
+import {
+  SparklesIcon,
+  PaperAirplaneIcon,
+  PhoneIcon,
+  VideoCameraIcon,
+  EllipsisVerticalIcon,
+} from "@heroicons/react/24/solid";
+
+function stripThinkSection(text) {
+  return text.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+}
+
 const Chat = () => {
   const { user } = userAuthStore();
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: "AI",
-      message: "Hello! How can I assist you today?",
-      // image: "navbarimg/pic1.png", 
-      image:"https://img.icons8.com/?size=100&id=q7wteb2_yVxu&format=png&color=000000"
+      message: "Hello! How can I assist you with your farming today?",
+      image: "/images/logo.png",
     },
   ]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const chatBoxRef = useRef(null);
+  const chatEndRef = useRef(null);
 
   const getAIResponse = async (input) => {
     try {
-      const responses = await axios.post(
-        "http://localhost:7180/ai/text", // Replace with your API endpoint
-        { input },
-        { withCredentials: true }
-      );
-
-      console.log("API Response:", responses.data); // Debugging
-
+      const responses = await axios.post("http://localhost:7180/ai/text", { input }, { withCredentials: true });
       if (responses.data) {
         return responses.data.chatCompletion;
       } else {
-        console.error("AI response is empty or invalid");
         return "I'm not sure how to respond to that. Please try again.";
       }
     } catch (error) {
       console.error("Error fetching AI response:", error);
-      return "I'm not sure how to respond to that. Please try again.";
+      return "I'm having trouble connecting. Please try again.";
     }
   };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (userInput.trim()) {
-      const newUserMessage = {
-        id: messages.length + 1,
-        sender: "User",
-        message: userInput,
-        image: user.avatar,
-      };
-      setMessages([...messages, newUserMessage]);
+    if (userInput.trim() && user) {
+      const newUserMessage = { id: Date.now(), sender: "User", message: userInput, image: user.avatar };
+      setMessages((prevMessages) => [...prevMessages, newUserMessage]);
       setIsLoading(true);
       setUserInput("");
 
       const aiResponse = await getAIResponse(userInput);
-      const newAIMessage = {
-        id: messages.length + 2,
-        sender: "AI",
-        message: aiResponse,
-        // image: "navbarimg/pic1.png",
-        image:"https://img.icons8.com/?size=100&id=q7wteb2_yVxu&format=png&color=000000"
-      };
+      const cleanedResponse = stripThinkSection(aiResponse);
+      const newAIMessage = { id: Date.now() + 1, sender: "AI", message: cleanedResponse, image: "/images/logo.png" };
       setMessages((prevMessages) => [...prevMessages, newAIMessage]);
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  }, [messages]);
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
 
   return (
-    <div className="flex flex-col h-[100vh] bg-gray-100">
-      <div className="flex-1 overflow-hidden">
-        <div className="max-w-3xl mx-auto p-4 h-[87vh] flex flex-col justify-between">
-         
-         
-         <div className="flex justify-between items-center bg-white rounded-t-xl shadow-md p-2 mb-2"> 
-            <div>
-              <h1 className="text-2xl font-bold  mb-4 text-gray-800">
-            KhetAI
-              </h1>
+    <div className="flex h-screen flex-col bg-slate-100">
+      <header className="flex-shrink-0 flex items-center justify-between border-b border-slate-200 bg-white p-4">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-green-100">
+              <SparklesIcon className="h-6 w-6 text-green-700" />
             </div>
-          <div className="flex items-center gap-4 text-gray-500 text-2xl">
-            <div> <IoCall /></div>
-            <div><MdVideoCall /></div>
-              <div><CiCircleMore/></div>
-          
-          
+            <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-white bg-green-500"></span>
           </div>
+          <div>
+            <h1 className="font-bold text-slate-800">KhetAI Assistant</h1>
+            <p className="text-sm text-green-600">Online</p>
           </div>
-          <div
-            ref={chatBoxRef}
-            className="flex-1 overflow-y-auto  rounded-t-xl shadow-md p-4  bg-cover bg-center bg-opacity-50"
-            // style={{ backgroundImage: "url('/vectorImg/chatbot.png')" }}
+        </div>
+        <div className="flex items-center gap-1">
+          <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100"><PhoneIcon className="h-6 w-6"/></button>
+          <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100"><VideoCameraIcon className="h-6 w-6"/></button>
+          <button className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100"><EllipsisVerticalIcon className="h-6 w-6"/></button>
+        </div>
+      </header>
 
-          >
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex items-center  w-full ${msg.sender === "User" ? "justify-end" : "justify-start"
-                  }`}
-              >
-                <div
-                  className={`flex items-center gap-2 ${msg.sender === "User" ? "flex-row-reverse" : "flex-row"
-                    }`}
-                >
-                  <img
-                    src={msg.image}
-                    className="h-8 w-8 rounded-full"
-                    alt="profile"
-                  />
-                  <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 m-2 rounded-lg shadow-md ${msg.sender === "User"
-                        ? "bg-green-500 text-white"
-                        : "bg-[#964B00] text-white"
-                      }`}
-                    style={{ whiteSpace: "pre-wrap" }}
-                  >
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]} // Enable GFM support
-                    >
-                      {msg.message}
-                    </ReactMarkdown>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">
-                  <p>AI is typing...</p>
-                </div>
-              </div>
-            )}
-          </div>
-          <form onSubmit={handleSendMessage} className="mt-4 flex">
-            <textarea
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 px-4 py-2 bg-white border outline-none border-gray-300 rounded-l-xl focus:outline-none resize-none"
-              rows={3}
-              autoFocus
-            />
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`px-4 py-2 bg-blue-500 text-white rounded-r-xl outline-none focus:outline-none ${isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"
-                }`}
+      <main className="flex-grow overflow-y-auto p-4 sm:p-6">
+        <div className="mx-auto max-w-3xl space-y-6">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex items-start gap-3 ${msg.sender === "User" ? "justify-end" : "justify-start"}`}
             >
-              Send
-            </button>
+              {msg.sender !== "User" && (
+                <img src={msg.image} className="h-10 w-10 rounded-full" alt="ai avatar" />
+              )}
+              <div
+                className={`max-w-xs sm:max-w-md lg:max-w-lg rounded-2xl px-4 py-2.5 shadow-sm ${
+                  msg.sender === "User"
+                    ? "rounded-br-none bg-green-600 text-white"
+                    : "rounded-bl-none bg-white text-slate-800"
+                }`}
+              >
+                <div className="prose prose-sm prose-slate max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.message}</ReactMarkdown>
+                </div>
+              </div>
+              {msg.sender === "User" && (
+                <img src={msg.image} className="h-10 w-10 rounded-full object-cover" alt="user avatar" />
+              )}
+            </div>
+          ))}
+
+          {isLoading && (
+            <div className="flex items-start gap-3">
+                <img src="/images/logo.png" className="h-10 w-10 rounded-full" alt="ai avatar" />
+                <div className="rounded-2xl rounded-bl-none bg-white px-4 py-3 shadow-sm">
+                    <div className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400 delay-0"></span>
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400 delay-150"></span>
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400 delay-300"></span>
+                    </div>
+                </div>
+            </div>
+          )}
+          <div ref={chatEndRef} />
+        </div>
+      </main>
+
+      <footer className="flex-shrink-0 border-t border-slate-200 bg-white p-2">
+        <div className="mx-auto max-w-3xl">
+            <form onSubmit={handleSendMessage} className="flex items-end gap-2 rounded-xl border border-slate-300 p-2 focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500">
+                <TextareaAutosize
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); }}}
+                    placeholder="Type your message..."
+                    className="w-full flex-1 resize-none border-none bg-transparent px-2 py-1.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0"
+                    minRows={1}
+                    maxRows={5}
+                    autoFocus
+                />
+                <button
+                    type="submit"
+                    disabled={isLoading || !userInput.trim()}
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-green-600 text-white shadow-sm transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    <PaperAirplaneIcon className="h-5 w-5" />
+                </button>
             </form>
         </div>
-      </div>
+      </footer>
     </div>
   );
 };

@@ -1,22 +1,25 @@
-
 import { Notification } from "../models/notification.model.js";
 import User from "../models/user.model.js";
 
 
 export const notification = async (req, res) => { 
     try {
+
+
         const { userId } = req.params;
                 const notification = await Notification.find ({ user: userId }).sort({createdAt:-1});
         res.status(200).json(notification);
-    } catch (error) {
+} catch (error) {
         console.error("Notification Error:", error);
         res.status(500).json({ error: "Server error", details: error.message });
     }
 }
 
-
 export const getUnreadNotification = async (req, res) => { 
-    const user =await User.findById(req.userId).select("-password")
+    const user = await User.findById(req.userId).select("-password")
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
     try { 
         const notification = await Notification.find({ user: user._id, read: false }).sort({ createdAt: -1 });
         const unreadNotifications = notification.filter(n => !n.read);
