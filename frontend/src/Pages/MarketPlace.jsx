@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import { userAuthStore } from "../store/authStore";
 import {
-  MapPinIcon,
   BuildingStorefrontIcon,
+  MapPinIcon,
   PlusIcon,
 } from "@heroicons/react/24/solid";
-import Button from "../components/Button";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { userAuthStore } from "../store/authStore";
 
 export const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -23,7 +22,9 @@ export const Marketplace = () => {
         if (response.data.success) {
           setProducts(response.data.data.products);
           const uniqueCategories = [
-            ...new Set(response.data.data.categories.map((cat) => cat.category)),
+            ...new Set(
+              response.data.data.categories.map((cat) => cat.category)
+            ),
           ];
           setCategories(["All", ...uniqueCategories]);
         }
@@ -90,9 +91,9 @@ export const Marketplace = () => {
           {filteredProducts.map((product) => (
             <div
               key={product._id}
-              className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              className="group flex flex-col m-auto overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             >
-              <div className="relative aspect-video">
+              <div className="relative block h-75 w-full object-fill">
                 <img
                   src={product.image}
                   alt={product.productName}
