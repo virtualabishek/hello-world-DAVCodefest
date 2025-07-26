@@ -1,17 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { GiftedChat, Bubble, Send, InputToolbar, Composer } from 'react-native-gifted-chat';
-import { View, Text, StyleSheet, ActivityIndicator, Keyboard } from 'react-native';
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Keyboard,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {
+  Bubble,
+  Composer,
+  GiftedChat,
+  InputToolbar,
+  Send,
+} from 'react-native-gifted-chat';
 import uuid from 'react-native-uuid';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import axios from 'axios';
-import { userAuthStore } from '../store/authStore';
-import { API_URL } from '../store/authStore';
 import GiftedChatWithRef from '../components/GiftedChatWithRef';
+import { API_URL, userAuthStore } from '../store/authStore';
 
 const SimpleChat = () => {
   const { user } = userAuthStore();
-  console.log(user ? user.avatar : "no user"); // Check what this logs
+  console.log(user ? user.avatar : 'no user'); // Check what this logs
 
   const [messages, setMessages] = useState([
     {
@@ -28,12 +39,12 @@ const SimpleChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const chatBoxRef = useRef(null);
 
-  const getAIResponse = async (input) => {
+  const getAIResponse = async input => {
     try {
       const response = await axios.post(
         `${API_URL}/ai/text`,
         { input },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       return response.data.chatCompletion;
     } catch (error) {
@@ -45,7 +56,9 @@ const SimpleChat = () => {
   const handleSendMessage = async (newMessages = []) => {
     if (newMessages.length > 0) {
       const newUserMessage = newMessages[0];
-      setMessages((previousMessages) => GiftedChat.append(previousMessages, [newUserMessage]));
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, [newUserMessage]),
+      );
       setIsLoading(true);
       Keyboard.dismiss();
 
@@ -66,7 +79,9 @@ const SimpleChat = () => {
         };
 
         // Append AI response to the chat
-        setMessages((previousMessages) => GiftedChat.append(previousMessages, [newAIMessage]));
+        setMessages(previousMessages =>
+          GiftedChat.append(previousMessages, [newAIMessage]),
+        );
       } catch (error) {
         console.error('Error sending message:', error);
       } finally {
@@ -75,7 +90,7 @@ const SimpleChat = () => {
     }
   };
 
-  const renderBubble = (props) => (
+  const renderBubble = props => (
     <Bubble
       {...props}
       wrapperStyle={{
@@ -89,21 +104,23 @@ const SimpleChat = () => {
     />
   );
 
-  const renderSend = (props) => (
+  const renderSend = props => (
     <Send {...props}>
       <View style={styles.sendButton}>
-        <Feather name='send' size={22} color='#2e64e5' />
+        <Feather name="send" size={22} color="#2e64e5" />
       </View>
     </Send>
   );
 
-  const scrollToBottomComponent = () => <FontAwesome name="angle-double-down" size={22} color="#2e64e5" />;
+  const scrollToBottomComponent = () => (
+    <FontAwesome name="angle-double-down" size={22} color="#2e64e5" />
+  );
 
-  const renderInputToolbar = (props) => (
+  const renderInputToolbar = props => (
     <InputToolbar {...props} containerStyle={styles.inputToolbar} />
   );
 
-  const renderComposer = (props) => (
+  const renderComposer = props => (
     <Composer {...props} textInputStyle={styles.composer} />
   );
 
@@ -117,12 +134,12 @@ const SimpleChat = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>KhetAI</Text>
+        <Text style={styles.headerText}>saralKheti</Text>
       </View>
       <GiftedChatWithRef
         ref={chatBoxRef}
         messages={messages}
-        onSend={(messages) => handleSendMessage(messages)}
+        onSend={messages => handleSendMessage(messages)}
         user={{
           _id: 1,
           name: user ? user.name : 'User',
@@ -138,7 +155,7 @@ const SimpleChat = () => {
       />
       {isLoading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size='large' color='#964B00' />
+          <ActivityIndicator size="large" color="#964B00" />
           <Text style={styles.loadingText}>AI is typing...</Text>
         </View>
       )}
@@ -201,8 +218,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-
 
 // import React, { useState, useEffect, useRef } from 'react';
 // import { GiftedChat, Bubble, Send, InputToolbar, Composer } from 'react-native-gifted-chat';
@@ -324,7 +339,7 @@ const styles = StyleSheet.create({
 //   return (
 //     <View style={styles.container}>
 //       <View style={styles.header}>
-//         <Text style={styles.headerText}>KhetAI</Text>
+//         <Text style={styles.headerText}>saralKheti</Text>
 //       </View>
 //       <GiftedChat
 //         ref={chatBoxRef}
