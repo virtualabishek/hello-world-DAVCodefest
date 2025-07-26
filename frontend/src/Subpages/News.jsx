@@ -4,10 +4,9 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { userAuthStore } from "../store/authStore";
-
 
 const CardSkeleton = () => (
   <div className="animate-pulse overflow-hidden rounded-xl bg-white shadow-md">
@@ -58,7 +57,11 @@ const NewsCard = ({ news, isExpanded, onToggleExpand }) => {
             onClick={handleReadMoreClick}
             className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-green-600 hover:text-green-800"
           >
-            <span>{isExpanded ? t('news.readLess', 'Read Less') : t('news.readMore', 'Read More')}</span>
+            <span>
+              {isExpanded
+                ? t("news.readLess", "Read Less")
+                : t("news.readMore", "Read More")}
+            </span>
             <ChevronDownIcon
               className={`h-4 w-4 transition-transform duration-200 ${
                 isExpanded ? "rotate-180" : ""
@@ -102,13 +105,13 @@ const News = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
-      <div className="container mx-auto  px-4">
+    <div className="min-h-screen bg-slate-50 ">
+      <div className="container mx-auto  px-4 py-8">
         <header className="mb-8 flex flex-col items-center justify-between gap-4 rounded-lg bg-white p-4 shadow-sm sm:flex-row sm:p-6">
           <div className="flex items-center gap-3">
             <NewspaperIcon className="h-8 w-8 text-green-600" />
             <h1 className="text-2xl font-bold text-slate-800 md:text-3xl">
-              {t('news.latest', 'Latest News')}
+              {t("news.latest", "Latest News")}
             </h1>
           </div>
 
@@ -118,7 +121,7 @@ const News = () => {
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-700 sm:w-auto"
             >
               <PlusIcon className="h-5 w-5" />
-              <span>{t('news.add', 'Add News')}</span>
+              <span>{t("news.add", "Add News")}</span>
             </Link>
           )}
         </header>

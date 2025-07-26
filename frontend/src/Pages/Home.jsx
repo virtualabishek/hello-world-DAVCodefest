@@ -5,8 +5,8 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { userAuthStore } from "../store/authStore";
 import Connectdevice from "../Subpages/Connectdevice";
 import News from "../Subpages/News";
@@ -39,10 +39,10 @@ const ConnectDevicePromptComponent = ({ refetch }) => {
           />
         </svg>
       </div>
-      <h3 className="mt-4 text-xl font-bold text-slate-800">{t("home.connect.title")}</h3>
-      <p className="mb-2 text-slate-500">
-        {t("home.connect.desc")}
-      </p>
+      <h3 className="mt-4 text-xl font-bold text-slate-800">
+        {t("home.connect.title")}
+      </h3>
+      <p className="mb-2 text-slate-500">{t("home.connect.desc")}</p>
       <Connectdevice refetch={refetch} className="mt-4" />
     </div>
   );
@@ -99,17 +99,18 @@ const Home = () => {
       <main className="container mx-auto space-y-8 p-4 py-8 md:space-y-12 md:p-6 lg:p-8">
         {/* --- Greeting & Weather Card --- */}
         <div className="rounded-xl bg-gradient-to-br from-green-500 to-green-700 p-6 text-white shadow-lg md:p-8">
-          <h1 className="text-3xl font-bold lg:text-4xl">
-            {getGreeting(t)}, {user?.username || t("home.farmer")}!
+          <h1 className="text-3xl font-bold lg:text-4xl ">
+            {getGreeting(t)},{" "}
+            <a className="capitalize">{user?.username || t("home.farmer")}!</a>
           </h1>
           <p className="opacity-90">{t("home.outlook")}</p>
           <div className="mt-6 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
             {/* Weather Info */}
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wider opacity-80">
+              <p className="text-sm font-semibold uppercase opacity-80">
                 {weather ? weather.city.name : t("home.loading")}
               </p>
-              <p className="text-5xl font-extrabold lg:text-6xl">
+              <p className="text-5xl font-bold lg:text-5xl">
                 {weather ? `${Math.round(weather.list[0].main.temp)}°C` : "..."}
               </p>
               <p className="capitalize">
@@ -121,7 +122,7 @@ const Home = () => {
               {weather?.list.slice(1, 6).map((entry, index) => (
                 <div
                   key={index}
-                  className="flex-shrink-0 rounded-lg bg-white/20 p-3 text-center text-sm backdrop-blur-sm"
+                  className="flex-shrink-0 rounded-lg bg-white/20 py-2 px-5 text-center text-sm backdrop-blur-xs"
                 >
                   <p className="font-semibold">
                     {new Date(entry.dt_txt).toLocaleTimeString("en-US", {
@@ -130,7 +131,7 @@ const Home = () => {
                     })}
                   </p>
                   <CloudIcon className="mx-auto my-1 h-8 w-8 opacity-90" />
-                  <p>{Math.round(entry.main.temp)}°</p>
+                  <p>{Math.round(entry.main.temp)}°C</p>
                 </div>
               ))}
             </div>
@@ -201,7 +202,7 @@ const Home = () => {
         </div>
 
         {/* --- News Section --- */}
-        <section>
+        <section className="">
           <News />
         </section>
       </main>
